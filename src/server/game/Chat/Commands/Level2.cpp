@@ -50,6 +50,9 @@
 //mute player for some times
 bool ChatHandler::HandleMuteCommand(const char* args)
 {
+    std::string announce;
+
+
     char* nameStr;
     char* delayStr;
     extractOptFirstArg((char*)args,&nameStr,&delayStr);
@@ -59,7 +62,14 @@ bool ChatHandler::HandleMuteCommand(const char* args)
     char *mutereason = strtok(NULL, "\r");
     std::string mutereasonstr = "No reason";
     if (mutereason != NULL)
-         mutereasonstr = mutereason;
+        mutereasonstr = mutereason;
+    if(!mutereason)
+    {
+        PSendSysMessage("Enter the reason for silence");
+        SetSentErrorMessage(true);
+        return false;
+    }
+
 
     Player* target;
     uint64 target_guid;
@@ -93,6 +103,17 @@ bool ChatHandler::HandleMuteCommand(const char* args)
     std::string nameLink = playerLink(target_name);
 
     PSendSysMessage(LANG_YOU_DISABLE_CHAT, nameLink.c_str(), notspeaktime, mutereasonstr.c_str());
+
+    announce = "Player '";
+    announce += nameStr;
+    announce += "' It was given to silence ";
+    announce += delayStr;
+    announce += " Minutes Gmom '";
+    announce += m_session->GetPlayerName();
+    announce += "'. Cause: ";
+    announce += mutereason;
+    HandleAnnounceCommand(announce.c_str());
+
 
     return true;
 }
@@ -2084,6 +2105,7 @@ bool ChatHandler::HandleKickPlayerCommand(const char *args)
         }
     }*/
     Player* target;
+          std::string announce;
     if (!extractPlayerTarget((char*)args,&target))
         return false;
 
@@ -2101,6 +2123,15 @@ bool ChatHandler::HandleKickPlayerCommand(const char *args)
     // send before target pointer invalidate
     PSendSysMessage(LANG_COMMAND_KICKMESSAGE,GetNameLink(target).c_str());
     target->GetSession()->KickPlayer();
+
+    announce = "Player '";
+    announce += target->GetName();
+    announce += "' He was kicked Gmom '";
+    announce += m_session->GetPlayerName();
+    announce += "'.";
+    HandleAnnounceCommand(announce.c_str());
+
+
     return true;
 }
 
