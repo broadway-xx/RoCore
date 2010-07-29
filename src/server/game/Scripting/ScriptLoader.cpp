@@ -989,8 +989,8 @@ void AddScripts()
     AddSC_boss_garfrost();
     AddSC_boss_ick();
     AddSC_boss_tyrannus();
-    AddSC_instance_hall_of_reflection();   // Halls of Reflection
-    AddSC_hall_of_reflection();
+    AddSC_instance_halls_of_reflection();   // Halls of Reflection
+    AddSC_halls_of_reflection();
     AddSC_boss_falric();
     AddSC_boss_marwyn();
     AddSC_boss_lich_king_hr();
