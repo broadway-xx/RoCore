@@ -2358,11 +2358,24 @@
 							>
 						</File>
 						<File
-							RelativePath="..\..\src\server\scripts\Northrend\FrozenHalls\HallsOfReflection\halls_of_reflection.h"
+							RelativePath="..\..\src\server\scripts\Northrend\FrozenHalls\HallsOfReflection\def_hall_of_reflection.h"
 							>
 						</File>
 						<File
 							RelativePath="..\..\src\server\scripts\Northrend\FrozenHalls\HallsOfReflection\instance_halls_of_reflection.cpp"
+							>
+						</File>
+<File
+							RelativePath="..\..\src\server\scripts\Northrend\FrozenHalls\HallsOfReflection\boss_the_lich_king_hor.cpp"
+							>
+						</File>
+<File
+							RelativePath="..\..\src\server\scripts\Northrend\FrozenHalls\HallsOfReflection\event_frostworn_general.cpp"
+							>
+						</File>
+		</File>
+<File
+							RelativePath="..\..\src\server\scripts\Northrend\FrozenHalls\HallsOfReflection\npc_sylvanas_hor.cpp"
 							>
 						</File>
 					</Filter>
