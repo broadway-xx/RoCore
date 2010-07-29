@@ -651,6 +651,14 @@
 					>
 				</File>
 				<File
+					RelativePath="..\..\src\server\game\OutdoorPvP\Zones\OutdoorPvPWG.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\src\server\game\OutdoorPvP\Zones\OutdoorPvPWG.h"
+					>
+				</File>
+				<File
 					RelativePath="..\..\src\server\game\OutdoorPvP\Zones\OutdoorPvPZM.cpp"
 					>
 				</File>
