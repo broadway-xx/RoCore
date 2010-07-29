@@ -2,7 +2,7 @@ ALTER TABLE db_version CHANGE COLUMN required_183_world_wintergrasp required_187
 
 -- Cleanup first
 UPDATE `creature_template` SET `Scriptname`=' ' WHERE `entry` IN (38112,38113,37221,37223,38175,38172,38567,38177,38173,38176);
-UPDATE `instance_template` SET `script`='instance_halls_of_reflection' WHERE (`map`='668');
+UPDATE `instance_template` SET `script`='instance_hall_of_reflection' WHERE (`map`='668');
 
 update `creature_template` set `speed_walk`='1.5', `speed_run`='2.0' where `entry` in (36954, 37226);
 update `creature_template` set `AIName`='', `Scriptname`='npc_jaina_and_sylvana_HRintro' where `entry` in (37221, 37223);
