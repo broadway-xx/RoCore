@@ -525,16 +525,16 @@ struct npc_jaina_and_sylvana_HRintroAI : public ScriptedAI
                 JumpNextStep(600);
                 break;
             case 34:
-                if(Creature* Falric = ((Creature*)Unit::GetUnit((*me), m_uiFalricGUID)))
+                if(Creature* Falric = ((Creature*)Unit::GetUnit(*me, m_uiFalricGUID)))
                    DoScriptText(SAY_FALRIC_INTRO, Falric);
-                if(Creature* Marwyn = ((Creature*)Unit::GetUnit((*me), m_uiMarwynGUID)))
+                if(Creature* Marwyn = ((Creature*)Unit::GetUnit(*me, m_uiMarwynGUID)))
                    DoScriptText(SAY_MARWYN_INTRO, Marwyn);
                 JumpNextStep(3000);
                 break;
             case 35:
                 if(GameObject* pGate = m_pInstance->instance->GetGameObject(m_uiMainGateGUID))
                    pGate->SetGoState(GO_STATE_ACTIVE);
-                if(Creature* Falric = ((Creature*)Unit::GetUnit((*me), m_uiFalricGUID)))
+                if(Creature* Falric = ((Creature*)Unit::GetUnit(*me, m_uiFalricGUID)))
                    DoScriptText(SAY_FALRIC_INTRO2, Falric);
                 m_pInstance->SetData(TYPE_FALRIC, SPECIAL);
                 JumpNextStep(4000);
@@ -609,12 +609,12 @@ bool GossipHello_npc_jaina_and_sylvana_HRintro(Player* pPlayer, Creature* pCreat
     switch(pCreature->GetEntry())
     {
        case NPC_JAINA:
-            pPlayer->ADD_GOSSIP_ITEM(GOSSIP_ICON_CHAT, "Lady Jaina, we are ready for next mission!", GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF+1);
-            pPlayer->ADD_GOSSIP_ITEM(GOSSIP_ICON_CHAT, "Lady Jaina, Let's go!", GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF+2);
+            pPlayer->ADD_GOSSIP_ITEM(GOSSIP_ICON_CHAT, GetScriptText(-1594536, pPlayer), GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF+1);
+            pPlayer->ADD_GOSSIP_ITEM(GOSSIP_ICON_CHAT, GetScriptText(-1594537, pPlayer), GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF+2);
             break;
        case NPC_SYLVANA: 
-            pPlayer->ADD_GOSSIP_ITEM(GOSSIP_ICON_CHAT, "Lady Sylvanas, we are ready for next mission!", GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF+1);
-            pPlayer->ADD_GOSSIP_ITEM(GOSSIP_ICON_CHAT, "Lady Sylvanas, Let's go!", GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF+2);
+            pPlayer->ADD_GOSSIP_ITEM(GOSSIP_ICON_CHAT, GetScriptText(-1594538, pPlayer), GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF+1);
+            pPlayer->ADD_GOSSIP_ITEM(GOSSIP_ICON_CHAT, GetScriptText(-1594539, pPlayer), GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF+2);
             break;
     }
 
@@ -867,8 +867,8 @@ struct npc_jaina_and_sylvana_HRextroAI : public npc_escortAI
        if(pPlayer->GetTeam() == HORDE && me->GetEntry() == NPC_JAINA_OUTRO) return;
 
        if(me->IsWithinDistInMap(who, 50.0f)
-          && m_pInstance->GetData(TYPE_FROST_GENERAL) == DONE)
-       if(me->GetDistance2d(who) <= 50 && m_pInstance->GetData(TYPE_MARWYN) == DONE && m_pInstance->GetData(TYPE_PHASE) == 3)
+          && m_pInstance->GetData(TYPE_FROST_GENERAL) == DONE
+          && m_pInstance->GetData(TYPE_PHASE) == 3)
        {
           pPlayer = (Player *)who;
           Event = true;
@@ -1154,7 +1154,7 @@ bool GossipHello_npc_jaina_and_sylvana_HRextro(Player* pPlayer, Creature* pCreat
     if(pCreature->isQuestGiver())
        pPlayer->PrepareQuestMenu( pCreature->GetGUID());
 
-    pPlayer->ADD_GOSSIP_ITEM(GOSSIP_ICON_CHAT, "Let's go!", GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF+1);
+    pPlayer->ADD_GOSSIP_ITEM(GOSSIP_ICON_CHAT, GetScriptText(-1594540, pPlayer), GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF+1);
 
     pPlayer->SEND_GOSSIP_MENU(pPlayer->GetGossipTextId(pCreature), pCreature->GetGUID());
 

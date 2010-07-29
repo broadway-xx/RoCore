@@ -62,7 +62,6 @@ struct boss_lich_king_hrAI : public npc_escortAI
    boss_lich_king_hrAI(Creature *pCreature) : npc_escortAI(pCreature)
    {
         m_pInstance = (ScriptedInstance*)pCreature->GetInstanceData();
-        me->setActive(true);
         Reset();
    }
 
@@ -99,9 +98,10 @@ struct boss_lich_king_hrAI : public npc_escortAI
                 if(Creature* pLider = ((Creature*)Unit::GetUnit((*me), m_pInstance->GetData64(DATA_ESCAPE_LIDER))))
                 { 
                  pLider->CastSpell(pLider, SPELL_SILENCE, false);
-                 pLider->RemoveFlag(MOVEFLAG_WALK, MOVEMENTFLAG_WALK_MODE);  //Questionible 
+                 //pLider->RemoveFlag(MOVEFLAG_WALK, MOVEMENTFLAG_WALK_MODE);  //Questionible 
 				 pLider->SendMonsterMove(pLider->GetPositionX(), pLider->GetPositionY(), pLider->GetPositionZ() + 4, VICTIMSTATE_NORMAL, pLider->isInCombat(), 3000); 
                 }
+                me->setActive(false);
                 break;
         }
    }
@@ -111,7 +111,7 @@ struct boss_lich_king_hrAI : public npc_escortAI
       if (!m_pInstance) return;
       if (!who)        return;
 
-     if(NonFight == true) return;
+     if (NonFight) return;
 
      if(m_pInstance->GetData(TYPE_LICH_KING) == IN_PROGRESS || who->GetTypeId() == TYPEID_PLAYER) return;
 
@@ -171,7 +171,7 @@ struct boss_lich_king_hrAI : public npc_escortAI
          case 3:
             DoCast(me, SPELL_WINTER);
             DoScriptText(SAY_LICH_KING_WINTER, me);
-            me->SetSpeed(MOVE_WALK, 1.0f, true);
+            me->SetSpeed(MOVE_WALK, 1.1f, true);
             StepTimer = 1000;
             ++Step;
             break;

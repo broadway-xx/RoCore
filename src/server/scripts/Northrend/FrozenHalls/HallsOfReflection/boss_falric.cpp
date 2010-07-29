@@ -164,6 +164,7 @@ struct boss_falricAI : public ScriptedAI
              if(Creature* Summon = me->SummonCreature(pSummon, SpawnLoc[m_uiLocNo].x, SpawnLoc[m_uiLocNo].y, SpawnLoc[m_uiLocNo].z, SpawnLoc[m_uiLocNo].o, TEMPSUMMON_CORPSE_TIMED_DESPAWN, 30000))
              {
                 m_uiSummonGUID[i] = Summon->GetGUID();
+                Summon->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
                 Summon->setFaction(974);
              }
              m_uiLocNo++;

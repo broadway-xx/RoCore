@@ -139,6 +139,7 @@ struct boss_marwynAI : public ScriptedAI
              if(Creature* Summon = me->SummonCreature(pSummon, SpawnLoc[m_uiLocNo].x, SpawnLoc[m_uiLocNo].y, SpawnLoc[m_uiLocNo].z, SpawnLoc[m_uiLocNo].o, TEMPSUMMON_CORPSE_TIMED_DESPAWN, 30000))
              {
                 m_uiSummonGUID[i] = Summon->GetGUID();
+                Summon->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
                 Summon->setFaction(974);
              }
              m_uiLocNo++;
@@ -181,6 +182,7 @@ struct boss_marwynAI : public ScriptedAI
 
     void Aggro(Unit* pVictim)
     {
+        if (!m_pInstance) return;
       //me->RemoveFlag(MOVEFLAG_WALK, MOVEMENTFLAG_WALK_MODE);
       DoScriptText(SAY_MARWYN_AGGRO, me);
     }
