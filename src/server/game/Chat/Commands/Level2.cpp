@@ -106,11 +106,11 @@ bool ChatHandler::HandleMuteCommand(const char* args)
 
     announce = "Player '";
     announce += nameStr;
-    announce += "' It was given to silence ";
+    announce += "' has been muted for ";
     announce += delayStr;
-    announce += " Minutes Gmom '";
+    announce += " minutes '";
     announce += m_session->GetPlayerName();
-    announce += "'. Cause: ";
+    announce += "'. Reason: ";
     announce += mutereason;
     HandleAnnounceCommand(announce.c_str());
 
@@ -2105,7 +2105,6 @@ bool ChatHandler::HandleKickPlayerCommand(const char *args)
         }
     }*/
     Player* target;
-          std::string announce;
     if (!extractPlayerTarget((char*)args,&target))
         return false;
 
@@ -2123,14 +2122,6 @@ bool ChatHandler::HandleKickPlayerCommand(const char *args)
     // send before target pointer invalidate
     PSendSysMessage(LANG_COMMAND_KICKMESSAGE,GetNameLink(target).c_str());
     target->GetSession()->KickPlayer();
-
-    announce = "Player '";
-    announce += target->GetName();
-    announce += "' He was kicked Gmom '";
-    announce += m_session->GetPlayerName();
-    announce += "'.";
-    HandleAnnounceCommand(announce.c_str());
-
 
     return true;
 }
