@@ -27,7 +27,7 @@ EndScriptData */
 #include "def_hall_of_reflection.h"
 #include "World.h"
 
-struct MANGOS_DLL_DECL instance_halls_of_reflection : public ScriptedInstance
+struct instance_halls_of_reflection : public ScriptedInstance
 {
     instance_halls_of_reflection(Map* pMap) : ScriptedInstance(pMap) 
     {
@@ -115,7 +115,7 @@ struct MANGOS_DLL_DECL instance_halls_of_reflection : public ScriptedInstance
         ALLIANCE_CONTROL_PHASE_SHIFT_1 = 55774,
         ALLIANCE_CONTROL_PHASE_SHIFT_2 = 60027,
     };
-        if (!sWorld.getConfig(CONFIG_BOOL_ALLOW_TWO_SIDE_INTERACTION_GROUP)) return;
+        if (!sWorld.getConfig(CONFIG_ALLOW_TWO_SIDE_INTERACTION_GROUP)) return;
 
         switch (pPlayer->GetTeam())
         {

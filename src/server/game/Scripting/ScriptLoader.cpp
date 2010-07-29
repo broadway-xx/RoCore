@@ -433,8 +433,8 @@ void AddSC_pit_of_saron();
 void AddSC_boss_garfrost();
 void AddSC_boss_ick();
 void AddSC_boss_tyrannus();
-void AddSC_instance_hall_of_reflection();   // Halls of Reflection
-void AddSC_hall_of_reflection();
+void AddSC_instance_halls_of_reflection();   // Halls of Reflection
+void AddSC_halls_of_reflection();
 void AddSC_boss_falric();
 void AddSC_boss_marwyn();
 void AddSC_boss_lich_king_hr();

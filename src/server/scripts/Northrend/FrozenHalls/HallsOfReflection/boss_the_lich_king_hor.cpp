@@ -54,6 +54,7 @@ enum
   SAY_LICH_KING_ABON                 = -1594483,
   SAY_LICH_KING_WINTER               = -1594481,
   SAY_LICH_KING_END_DUN              = -1594504, 
+  SAY_LICH_KING_WIN                  = -1594485,
 };
 
 struct boss_lich_king_hrAI : public npc_escortAI
@@ -129,7 +130,7 @@ struct boss_lich_king_hrAI : public npc_escortAI
 
          summoned->SetPhaseMask(65535, true);
          summoned->SetInCombatWithZone();
-         summoned->SetActiveObjectState(true);
+         summoned->setActive(true);
 
          m_pInstance->SetData(DATA_SUMMONS, 1);
 
@@ -293,7 +294,7 @@ struct boss_lich_king_hrAI : public npc_escortAI
             me->RemoveAurasDueToSpell(SPELL_ICE_PRISON);
          if(me->HasAura(SPELL_DARK_ARROW))
             me->RemoveAurasDueToSpell(SPELL_DARK_ARROW);
-         me->SetActiveObjectState(true);
+         me->setActive(true);
 
          
          NonFight = true;
@@ -309,7 +310,7 @@ struct boss_lich_king_hrAI : public npc_escortAI
       if (Creature* pLider = ((Creature*)Unit::GetUnit((*me), m_pInstance->GetData64(DATA_ESCAPE_LIDER))))
          if (pLider->IsWithinDistInMap(me, 2.0f)) 
          {
-            me->SetActiveObjectState(false);
+            me->setActive(false);
             SetEscortPaused(true);
             npc_escortAI::EnterEvadeMode();
             DoScriptText(SAY_LICH_KING_WIN, me);

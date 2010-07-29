@@ -172,7 +172,7 @@ struct npc_jaina_and_sylvana_HRintroAI : public ScriptedAI
    void StartEvent()
    {
       if(!m_pInstance) return
-      debug_log("EventMGR: creature %u received signal %u ",me->GetEntry(),m_pInstance->GetData(TYPE_EVENT));
+      sLog.outDebug("EventMGR: creature %u received signal %u ",me->GetEntry(),m_pInstance->GetData(TYPE_EVENT));
          m_pInstance->SetData(TYPE_PHASE, 1);
          m_pInstance->SetData(TYPE_EVENT, 0);
       Step = 1;
@@ -867,7 +867,7 @@ struct npc_jaina_and_sylvana_HRextroAI : public npc_escortAI
        if(pPlayer->GetTeam() == HORDE && me->GetEntry() == NPC_JAINA_OUTRO) return;
 
        if(me->IsWithinDistInMap(who, 50.0f)
-          && m_pInstance->GetData(TYPE_FROST_GENERAL) == DONE
+          && m_pInstance->GetData(TYPE_FROST_GENERAL) == DONE)
        if(me->GetDistance2d(who) <= 50 && m_pInstance->GetData(TYPE_MARWYN) == DONE && m_pInstance->GetData(TYPE_PHASE) == 3)
        {
           pPlayer = (Player *)who;
@@ -1013,14 +1013,14 @@ struct npc_jaina_and_sylvana_HRextroAI : public npc_escortAI
            case 10:
                   me->CastSpell(me, SPELL_SHIELD_DISRUPTION,false);
                   me->RemoveAurasDueToSpell(SPELL_SILENCE);
-                  me->RemoveSplineFlag(SPLINEFLAG_FLYING);
+               //   me->RemoveSplineFlag(SPLINEFLAG_FLYING);
               JumpNextStep(6000);
               break;
            case 11:
-                if(GameObject* pCave = me->SummonGameobject(GO_CAVE, 5275.28f, 1694.23f, 786.147f, 0.981225f, 0))
+                if(GameObject* pCave = me->SummonGameObject(GO_CAVE, 5275.28f, 1694.23f, 786.147f, 0.981225f, 0, 0, 1, 0, 0))
                    pCave->SetGoState(GO_STATE_READY);
                    me->CastSpell(me, SPELL_SHIELD_DISRUPTION,false);
-                   me->RemoveSplineFlag(SPLINEFLAG_WALKMODE);
+                 //  me->RemoveSplineFlag(SPLINEFLAG_WALKMODE);
                    me->GetMotionMaster()->MovePoint(0, 5258.911328f,1652.112f,784.295166f);
                    DoScriptText(SAY_ESCAPE_01, me);
               JumpNextStep(10000);
@@ -1234,7 +1234,7 @@ enum GENERAL_EVENT
    SPELL_SPIKE                  = 59446   // this is not right spell!
 };
 
-struct MANGOS_DLL_DECL npc_frostworn_generalAI : public ScriptedAI
+struct npc_frostworn_generalAI : public ScriptedAI
 {
    npc_frostworn_generalAI(Creature *pCreature) : ScriptedAI(pCreature)
    {
@@ -1291,19 +1291,19 @@ struct MANGOS_DLL_DECL npc_frostworn_generalAI : public ScriptedAI
 
    void UpdateAI(const uint32 uiDiff)
    {
-        if(!me->SelectHostileTarget() || !me->getVictim())
+        if(!UpdateVictim())
             return;
 
         if(m_uiShieldTimer < uiDiff)
         {
-            if(Unit *pTarget = me->SelectAttackingTarget(ATTACKING_TARGET_RANDOM, 0))
+            if(Unit *pTarget = SelectTarget(SELECT_TARGET_RANDOM, 0))
                DoCast(pTarget,SPELL_SHIELD_THROWN);
             m_uiShieldTimer = urand(8000, 12000);
         } else m_uiShieldTimer -= uiDiff;
 
         if (m_uiSpikeTimer < uiDiff) 
         {
-            if(Unit *pTarget = me->SelectAttackingTarget(ATTACKING_TARGET_RANDOM, 0))
+            if(Unit *pTarget = SelectTarget(SELECT_TARGET_RANDOM, 0))
                DoCast(pTarget, SPELL_SPIKE);
             m_uiSpikeTimer = urand(15000, 20000);
         } else m_uiSpikeTimer -= uiDiff;
