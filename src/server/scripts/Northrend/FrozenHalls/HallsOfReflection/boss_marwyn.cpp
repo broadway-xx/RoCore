@@ -89,7 +89,7 @@ struct boss_marwynAI : public ScriptedAI
       m_bIsCall = false;
       m_uiSummonTimer = 15000;
       me->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
-      me->SetVisibility(VISIBILITY_OFF);
+//      me->SetVisibility(VISIBILITY_OFF);
     }
 
     void Summon()

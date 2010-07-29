@@ -81,7 +81,7 @@ struct boss_falricAI : public ScriptedAI
       m_uiStrikeTimer = 2000;
       m_uiSummonTimer = 11000;
       me->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
-      me->SetVisibility(VISIBILITY_OFF);
+//      me->SetVisibility(VISIBILITY_OFF);
     }
 
     void Aggro(Unit* pVictim)
