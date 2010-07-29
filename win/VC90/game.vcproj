@@ -651,14 +651,6 @@
 					>
 				</File>
 				<File
-					RelativePath="..\..\src\server\game\OutdoorPvP\Zones\OutdoorPvPWG.cpp"
-					>
-				</File>
-				<File
-					RelativePath="..\..\src\server\game\OutdoorPvP\Zones\OutdoorPvPWG.h"
-					>
-				</File>
-				<File
 					RelativePath="..\..\src\server\game\OutdoorPvP\Zones\OutdoorPvPZM.cpp"
 					>
 				</File>
@@ -1268,7 +1260,6 @@
 					<File
 						RelativePath="..\..\src\server\scripts\EasternKingdoms\MoltenCore\boss_lucifron.cpp"
 						>
-
 					</File>
 					<File
 						RelativePath="..\..\src\server\scripts\EasternKingdoms\MoltenCore\boss_magmadar.cpp"
@@ -2220,10 +2211,6 @@
 					>
 				</File>
 				<File
-					RelativePath="..\..\src\server\scripts\Northrend\wintergrasp.cpp"
-					>
-				</File>
-				<File
 					RelativePath="..\..\src\server\scripts\Northrend\zuldrak.cpp"
 					>
 				</File>
@@ -2316,7 +2303,7 @@
 					</File>
 				</Filter>
 				<Filter
-					Name="Frozen Halls"
+					Name="Icecrown Citadel"
 					>
 					<Filter
 						Name="Forge of Souls"
@@ -2358,15 +2345,11 @@
 							>
 						</File>
 						<File
-							RelativePath="..\..\src\server\scripts\Northrend\FrozenHalls\HallsOfReflection\def_hall_of_reflection.h"
+							RelativePath="..\..\src\server\scripts\Northrend\FrozenHalls\HallsOfReflection\halls_of_reflection.h"
 							>
 						</File>
 						<File
 							RelativePath="..\..\src\server\scripts\Northrend\FrozenHalls\HallsOfReflection\instance_halls_of_reflection.cpp"
-							>
-						</File>
-						<File
-							RelativePath="..\..\src\server\scripts\Northrend\FrozenHalls\HallsOfReflection\boss_the_lich_king_hor.cpp"
 							>
 						</File>
 					</Filter>
@@ -2520,174 +2503,33 @@
 					</File>
 				</Filter>
 				<Filter
-					Name="Crusaders Coliseum"
-					>
-					<Filter
-						Name="Trial of the Champion"
-						>
-						<File
-							RelativePath="..\..\src\server\scripts\Northrend\CrusadersColiseum\TrialOfTheChampion\boss_argent_challenge.cpp"
-							>
-						</File>
-						<File
-							RelativePath="..\..\src\server\scripts\Northrend\CrusadersColiseum\TrialOfTheChampion\boss_black_knight.cpp"
-							>
-						</File>
-						<File
-							RelativePath="..\..\src\server\scripts\Northrend\CrusadersColiseum\TrialOfTheChampion\boss_grand_champions.cpp"
-							>
-						</File>
-						<File
-							RelativePath="..\..\src\server\scripts\Northrend\CrusadersColiseum\TrialOfTheChampion\instance_trial_of_the_champion.cpp"
-							>
-						</File>
-						<File
-							RelativePath="..\..\src\server\scripts\Northrend\CrusadersColiseum\TrialOfTheChampion\trial_of_the_champion.cpp"
-							>
-						</File>
-						<File
-							RelativePath="..\..\src\server\scripts\Northrend\CrusadersColiseum\TrialOfTheChampion\trial_of_the_champion.h"
-							>
-						</File>
-					</Filter>
-					<Filter
-						Name="Trial of the crusader"
-						>
-						<File
-							RelativePath="..\..\src\server\scripts\Northrend\CrusadersColiseum\TrialOfTheCrusader\alliance_champions.cpp"
-							>
-						</File>
-						<File
-							RelativePath="..\..\src\server\scripts\Northrend\CrusadersColiseum\TrialOfTheCrusader\boss_anubarak_trial.cpp"
-							>
-						</File>
-						<File
-							RelativePath="..\..\src\server\scripts\Northrend\CrusadersColiseum\TrialOfTheCrusader\boss_jaraxxus.cpp"
-							>
-						</File>
-						<File
-							RelativePath="..\..\src\server\scripts\Northrend\CrusadersColiseum\TrialOfTheCrusader\boss_northrend_beasts.cpp"
-							>
-						</File>
-						<File
-							RelativePath="..\..\src\server\scripts\Northrend\CrusadersColiseum\TrialOfTheCrusader\boss_twin_valkyr.cpp"
-							>
-						</File>
-						<File
-							RelativePath="..\..\src\server\scripts\Northrend\CrusadersColiseum\TrialOfTheCrusader\horde_champions.cpp"
-							>
-						</File>
-						<File
-							RelativePath="..\..\src\server\scripts\Northrend\CrusadersColiseum\TrialOfTheCrusader\instance_trial_of_the_crusader.cpp"
-							>
-						</File>
-						<File
-							RelativePath="..\..\src\server\scripts\Northrend\CrusadersColiseum\TrialOfTheCrusader\trial_of_the_crusader.cpp"
-							>
-						</File>
-						<File
-							RelativePath="..\..\src\server\scripts\Northrend\CrusadersColiseum\TrialOfTheCrusader\trial_of_the_crusader.h"
-							>
-						</File>
-						</Filter>
-					</Filter>
-				<Filter
-					Name="Icecrown Citadel"
+					Name="Trial of the Champion"
 					>
 					<File
-						RelativePath="..\..\src\server\scripts\Northrend\IcecrownCitadel\blood_prince_council.cpp"
+						RelativePath="..\..\src\server\scripts\Northrend\CrusadersColiseum\TrialOfTheChampion\boss_argent_challenge.cpp"
 						>
 					</File>
 					<File
-						RelativePath="..\..\src\server\scripts\Northrend\IcecrownCitadel\boss_blood_queen_lanathel.cpp"
+						RelativePath="..\..\src\server\scripts\Northrend\CrusadersColiseum\TrialOfTheChampion\boss_black_knight.cpp"
 						>
 					</File>
 					<File
-						RelativePath="..\..\src\server\scripts\Northrend\IcecrownCitadel\boss_deathbringer_saurfang.cpp"
+						RelativePath="..\..\src\server\scripts\Northrend\CrusadersColiseum\TrialOfTheChampion\boss_grand_champions.cpp"
 						>
 					</File>
 					<File
-						RelativePath="..\..\src\server\scripts\Northrend\IcecrownCitadel\boss_festergut.cpp"
+						RelativePath="..\..\src\server\scripts\Northrend\CrusadersColiseum\TrialOfTheChampion\instance_trial_of_the_champion.cpp"
 						>
 					</File>
 					<File
-						RelativePath="..\..\src\server\scripts\Northrend\IcecrownCitadel\boss_lady_deathwhisper.cpp"
+						RelativePath="..\..\src\server\scripts\Northrend\CrusadersColiseum\TrialOfTheChampion\trial_of_the_champion.cpp"
 						>
 					</File>
 					<File
-						RelativePath="..\..\src\server\scripts\Northrend\IcecrownCitadel\boss_lord_marrowgar.cpp"
-						>
-					</File>
-					<File
-						RelativePath="..\..\src\server\scripts\Northrend\IcecrownCitadel\boss_proffesor_putricide.cpp"
-						>
-					</File>
-					<File
-						RelativePath="..\..\src\server\scripts\Northrend\IcecrownCitadel\boss_rotface.cpp"
-						>
-					</File>
-					<File
-						RelativePath="..\..\src\server\scripts\Northrend\IcecrownCitadel\boss_sindragosa.cpp"
-						>
-					</File>
-					<File
-						RelativePath="..\..\src\server\scripts\Northrend\IcecrownCitadel\boss_the_lich_king.cpp"
-						>
-					</File>
-					<File
-						RelativePath="..\..\src\server\scripts\Northrend\IcecrownCitadel\boss_valithria_dreamwalker.cpp"
-						>
-					</File>
-					<File
-						RelativePath="..\..\src\server\scripts\Northrend\IcecrownCitadel\gunship_battle.cpp"
-						>
-					</File>
-					<File
-						RelativePath="..\..\src\server\scripts\Northrend\IcecrownCitadel\icecrown_citadel.h"
-						>
-					</File>
-					<File
-						RelativePath="..\..\src\server\scripts\Northrend\IcecrownCitadel\icecrown_teleport.cpp"
-						>
-					</File>
-					<File
-						RelativePath="..\..\src\server\scripts\Northrend\IcecrownCitadel\instance_icecrown_citadel.cpp"
-						>
-					</File>
-					<File
-						RelativePath="..\..\src\server\scripts\Northrend\IcecrownCitadel\icecrown_citadel.cpp"
+						RelativePath="..\..\src\server\scripts\Northrend\CrusadersColiseum\TrialOfTheChampion\trial_of_the_champion.h"
 						>
 					</File>
 				</Filter>
-				<Filter
-					Name="Ruby Sanctum"
-					>
-					<File
-						RelativePath="..\..\src\server\scripts\Northrend\RubySanctum\boss_baltharus.cpp"
-						>
-					</File>
-					<File
-						RelativePath="..\..\src\server\scripts\Northrend\RubySanctum\boss_halion.cpp"
-						>
-					</File>
-					<File
-						RelativePath="..\..\src\server\scripts\Northrend\RubySanctum\boss_ragefire.cpp"
-						>
-					</File>
-					<File
-						RelativePath="..\..\src\server\scripts\Northrend\RubySanctum\boss_zarithrian.cpp"
-						>
-					</File>
-					<File
-						RelativePath="..\..\src\server\scripts\Northrend\RubySanctum\instance_ruby_sanctum.cpp"
-						>
-					</File>
-					<File
-						RelativePath="..\..\src\server\scripts\Northrend\RubySanctum\ruby_sanctum.h"
-						>
-					</File>
-				</Filter>
-
 				<Filter
 					Name="Ulduar"
 					>
