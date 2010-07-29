@@ -509,13 +509,15 @@ struct npc_jaina_and_sylvana_HRintroAI : public ScriptedAI
                 m_uiFalricGUID = m_pInstance->GetData64(NPC_FALRIC);
                 m_uiMarwynGUID = m_pInstance->GetData64(NPC_MARWYN);
                 if(Creature* Falric = ((Creature*)Unit::GetUnit((*me), m_uiFalricGUID)))
-                { 
+                {
+                   Falric->RemoveAllAuras();
                    Falric->SetVisibility(VISIBILITY_ON);
                    Falric->CastSpell(Falric, SPELL_BOSS_SPAWN_AURA, false);
                    Falric->GetMotionMaster()->MovePoint(0, 5283.309f, 2031.173f, 709.319f);
                 }
                 if(Creature* Marwyn = ((Creature*)Unit::GetUnit((*me), m_uiMarwynGUID)))
                 {
+                   Marwyn->RemoveAllAuras();
                    Marwyn->SetVisibility(VISIBILITY_ON);
                    Marwyn->CastSpell(Marwyn, SPELL_BOSS_SPAWN_AURA, false);
                    Marwyn->GetMotionMaster()->MovePoint(0, 5335.585f, 1981.439f, 709.319f);
