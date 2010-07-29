@@ -438,8 +438,6 @@ void AddSC_hall_of_reflection();
 void AddSC_boss_falric();
 void AddSC_boss_marwyn();
 void AddSC_boss_lich_king_hr();
-void AddSC_event_frostworn_general();
-void AddSC_sylvanas();
 void AddSC_instance_icecrown_citadel(); //Icecrown Citadel
 void AddSC_boss_blood_council();
 void AddSC_boss_valithria();
@@ -996,8 +994,6 @@ void AddScripts()
     AddSC_boss_falric();
     AddSC_boss_marwyn();
     AddSC_boss_lich_king_hr();
-    AddSC_event_frostworn_general();
-    AddSC_sylvanas();
     AddSC_instance_icecrown_citadel(); //Icecrown Citadel
     AddSC_boss_blood_council();
     AddSC_boss_saurfang();

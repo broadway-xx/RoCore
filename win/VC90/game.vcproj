@@ -2369,14 +2369,6 @@
 							RelativePath="..\..\src\server\scripts\Northrend\FrozenHalls\HallsOfReflection\boss_the_lich_king_hor.cpp"
 							>
 						</File>
-						<File
-							RelativePath="..\..\src\server\scripts\Northrend\FrozenHalls\HallsOfReflection\event_frostworn_general.cpp"
-							>
-						</File>
-						<File
-							RelativePath="..\..\src\server\scripts\Northrend\FrozenHalls\HallsOfReflection\npc_sylvanas_hor.cpp"
-							>
-						</File>
 					</Filter>
 					<Filter
 						Name="Pit of Saron"

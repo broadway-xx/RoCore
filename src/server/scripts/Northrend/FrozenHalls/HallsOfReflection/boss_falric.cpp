@@ -80,8 +80,10 @@ struct boss_falricAI : public ScriptedAI
       m_uiHorrorTimer = urand(14000,20000);
       m_uiStrikeTimer = 2000;
       m_uiSummonTimer = 11000;
+      me->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
+      me->SetVisibility(VISIBILITY_OFF);
     }
-    //ENTERING COMBAT
+
     void Aggro(Unit* pVictim)
     {
       //me->RemoveFlag(MOVEFLAG_WALK, NULL);
@@ -100,14 +102,15 @@ struct boss_falricAI : public ScriptedAI
 
     void JustDied(Unit* pKiller)
     {
-      if(m_pInstance)
+      if(!m_pInstance) return;
          m_pInstance->SetData(TYPE_MARWYN, SPECIAL);
       DoScriptText(SAY_FALRIC_DEATH, me);
     }
 
     void AttackStart(Unit* who) 
     { 
-         if(m_pInstance) 
+        if(!m_pInstance) return;
+
            if(m_pInstance->GetData(TYPE_FALRIC) != IN_PROGRESS)
              return; 
 
@@ -174,11 +177,11 @@ struct boss_falricAI : public ScriptedAI
             if(Creature* Summon = m_pInstance->instance->GetCreature(m_uiSummonGUID[m_uiCheckSummon]))
             {
                Summon->setFaction(14);
+               Summon->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
                Summon->SetInCombatWithZone();
             }
             m_uiCheckSummon++;
          }
-            
     }
 
     void UpdateAI(const uint32 uiDiff)

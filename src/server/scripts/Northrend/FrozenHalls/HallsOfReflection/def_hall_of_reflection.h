@@ -3,16 +3,22 @@
 
 enum Data
 {
-    TYPE_PHASE              = 1,
+    TYPE_PHASE              = 0,
+    TYPE_EVENT              = 1,
     TYPE_FALRIC             = 2,
     TYPE_MARWYN             = 3,
-    TYPE_LICH_KING          = 4,
-    TYPE_ICE_WALL_01        = 5,
-    TYPE_ICE_WALL_02        = 6,
-    TYPE_ICE_WALL_03        = 7,
-    TYPE_ICE_WALL_04        = 8,
-    TYPE_LIDER              = 9,
-    DATA_ESCAPE_LIDER       = 10,
+    TYPE_FROST_GENERAL      = 4,
+    TYPE_LICH_KING          = 5,
+    TYPE_ICE_WALL_01        = 6,
+    TYPE_ICE_WALL_02        = 7,
+    TYPE_ICE_WALL_03        = 8,
+    TYPE_ICE_WALL_04        = 9,
+    TYPE_HALLS              = 10,
+    MAX_ENCOUNTERS,
+
+    DATA_ESCAPE_LIDER       = 101,
+    DATA_LIDER              = 102,
+    DATA_SUMMONS            = 103,
 
     /*UNITS*/
     NPC_DARK_1                   = 38177, //Shadowy Mercenary
@@ -43,11 +49,23 @@ enum Data
     NPC_RISEN_WITCH_DOCTOR       = 36941,
     NPC_ABON                     = 37069,
 
-    /*GAME OBJECT*/
+    NPC_FROST_GENERAL            = 36723,
+
+    GO_ICECROWN_DOOR             = 201976, //72802
+    GO_ICECROWN_DOOR_2           = 197342,
+    GO_ICECROWN_DOOR_3           = 197343,
+    GO_IMPENETRABLE_DOOR         = 197341, //72801
+    GO_FROSTMOURNE_ALTAR         = 202236, //3551
+    GO_FROSTMOURNE               = 202302, //364
+
     GO_ICE_WALL                  = 201385,
-    GO_MAIN_GATE                 = 197341,
-    GO_FROSTMOURNE               = 202302,
-    GO_EXIT_GATE                 = 201976
+    GO_CAVE                      = 201596,
+    GO_PORTAL                    = 202079,
+
+    GO_CAPTAIN_CHEST_1           = 202212, //3145
+    GO_CAPTAIN_CHEST_2           = 201710, //30357
+    GO_CAPTAIN_CHEST_3           = 202337, //3246
+    GO_CAPTAIN_CHEST_4           = 202336, //3333
 };
 
 struct Locations

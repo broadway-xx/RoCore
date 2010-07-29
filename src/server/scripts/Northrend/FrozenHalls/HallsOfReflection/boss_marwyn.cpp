@@ -88,6 +88,8 @@ struct boss_marwynAI : public ScriptedAI
       SummonCount = 0;
       m_bIsCall = false;
       m_uiSummonTimer = 15000;
+      me->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
+      me->SetVisibility(VISIBILITY_OFF);
     }
 
     void Summon()
@@ -150,11 +152,11 @@ struct boss_marwynAI : public ScriptedAI
             if(Creature* Summon = m_pInstance->instance->GetCreature(m_uiSummonGUID[m_uiCheckSummon]))
             {
                Summon->setFaction(14);
+               Summon->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
                Summon->SetInCombatWithZone();
             }
             m_uiCheckSummon++;
          }
-            
     }
 
     void JustDied(Unit* pKiller)
@@ -185,7 +187,8 @@ struct boss_marwynAI : public ScriptedAI
 
     void AttackStart(Unit* who) 
     { 
-         if (m_pInstance) 
+        if (!m_pInstance) return;
+
            if (m_pInstance->GetData(TYPE_MARWYN) != IN_PROGRESS)
              return; 
 
