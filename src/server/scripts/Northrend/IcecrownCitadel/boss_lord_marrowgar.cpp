@@ -271,6 +271,15 @@ struct boss_lord_marrowgarAI : public ScriptedAI
                 m_uiSaberSlashTimer = 6000;
             } else m_uiSaberSlashTimer -= uiDiff;
 
+            if (m_uiColdFlameTimer <= uiDiff)
+                {
+                    me->SummonCreature(CREATURE_COLD_FLAME, me->GetPositionX()+20, me->GetPositionY()+20, me->GetPositionZ(), 0, TEMPSUMMON_TIMED_DESPAWN, 8000);
+                    me->SummonCreature(CREATURE_COLD_FLAME, me->GetPositionX()-20, me->GetPositionY()-20, me->GetPositionZ(), 0, TEMPSUMMON_TIMED_DESPAWN, 8000);
+                    me->SummonCreature(CREATURE_COLD_FLAME, me->GetPositionX()+20, me->GetPositionY()-20, me->GetPositionZ(), 0, TEMPSUMMON_TIMED_DESPAWN, 8000);
+                    me->SummonCreature(CREATURE_COLD_FLAME, me->GetPositionX()-20, me->GetPositionY()+20, me->GetPositionZ(), 0, TEMPSUMMON_TIMED_DESPAWN, 8000);
+                    m_uiColdFlameTimer = 15000;
+                } else m_uiColdFlameTimer -= uiDiff;
+
         }
 
         if (me->HasAura(SPELL_BONE_STORM_CHANNEL))
