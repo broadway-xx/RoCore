@@ -119,7 +119,7 @@ struct boss_blood_councilAI : public ScriptedAI
     {
       if (me->IsWithinDistInMap(pwho,25.0f))
       {
-      if (PhaseIntro == 1)
+      if (PhaseIntro == 0)
       {
        if (pInstance)
        pInstance->SetData(DATA_BLOOD_PRINCE_COUNCIL_EVENT, IN_PROGRESS);
@@ -201,8 +201,8 @@ struct boss_blood_councilAI : public ScriptedAI
         if (InvocationTimer <= diff)
         {
         me->RemoveAllAuras();
-        pKeleseth->RemoveAllAuras();
-        pTaldaram->RemoveAllAuras();
+        //pKeleseth->RemoveAllAuras();
+        //pTaldaram->RemoveAllAuras();
         InvocationNumber = urand(1,3);
         InvocationTimer = 60000;
         if (InvocationNumber == 1) //Since only 1 of the bosses is attackable during the invocation
