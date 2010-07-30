@@ -55,7 +55,7 @@ void BSWScriptedAI::_loadSpellTable()
     sprintf(query, "SELECT entry, spellID_N10, spellID_N25, spellID_H10, spellID_H25, timerMin_N10, timerMin_N25, timerMin_H10, timerMin_H25, timerMax_N10, timerMax_N25, timerMax_H10, timerMax_H25, data1, data2, data3, data4, locData_x, locData_y, locData_z, varData, StageMask_N, StageMask_H, CastType, isVisualEffect, isBugged, textEntry FROM `boss_spell_table` WHERE entry = %u;\r\n", me->GetEntry());
 
     mMutex.acquire();
-       QueryResult* Result = strSD2Pquery(query);
+       QueryResult_AutoPtr Result = WorldDatabase.PQuery(query);
     mMutex.release();
 
     if (Result)
@@ -172,7 +172,7 @@ CanCastResult BSWScriptedAI::_BSWSpellSelector(uint8 m_uiSpellIdx, Unit* pTarget
                    break;
 
             case CAST_ON_BOTTOMAGGRO:
-                   pTarget = me->SelectAttackingTarget(ATTACKING_TARGET_BOTTOMAGGRO,0);
+                   pTarget = SelectUnit(SELECT_TARGET_BOTTOMAGGRO,0);
                    result = _BSWCastOnTarget(pTarget, m_uiSpellIdx);
                    break;
 
@@ -626,10 +626,10 @@ CanCastResult BSWScriptedAI::_CanCastSpell(Unit* pTarget, const SpellEntry *pSpe
             // pTarget is out of range of this spell (also done by Spell::CheckCast())
             float fDistance = me->GetCombatDistance(pTarget);
 
-            if (fDistance > (me->IsHostileTo(pTarget) ? pSpellRange->maxRange : pSpellRange->maxRangeFriendly))
+            if (fDistance > (me->IsHostileTo(pTarget) ? pSpellRange->maxRangeHostile : pSpellRange->maxRangeFriend))
                 return CAST_FAIL_TOO_FAR;
 
-            float fMinRange = me->IsHostileTo(pTarget) ? pSpellRange->minRange : pSpellRange->minRangeFriendly;
+            float fMinRange = me->IsHostileTo(pTarget) ? pSpellRange->minRangeHostile : pSpellRange->minRangeFriend;
 
             if (fMinRange && fDistance < fMinRange)
                 return CAST_FAIL_TOO_CLOSE;
