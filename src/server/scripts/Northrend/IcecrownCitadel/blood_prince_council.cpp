@@ -137,6 +137,8 @@ struct boss_blood_councilAI : public ScriptedAI
      InvocationTimer = 60000;
      EmpoweredVortexTimer = 25000;
      InvocationNumber = 0;
+     pKeleseth->SetInCombatWithZone();
+     pTaldaram->SetInCombatWithZone();
      }
 
          void KilledUnit(Unit *victim)
@@ -274,6 +276,8 @@ struct boss_Keleseth_IccAI : public ScriptedAI
      ShadowLance = 1500;
      EmpoweredLance = 600000;
      AuraCheck = 1000;
+     pValanar->SetInCombatWithZone();
+     pTaldaram->SetInCombatWithZone();
      }
 
     void KilledUnit(Unit *victim)
@@ -306,7 +310,7 @@ struct boss_Keleseth_IccAI : public ScriptedAI
         if (NucleusTimer <= diff)
         {
         me->SummonCreature(Nucleus,me->GetPositionX(),me->GetPositionY(),me->GetPositionZ(),0, TEMPSUMMON_TIMED_DESPAWN, 63000);
-        NucleusTimer = 30000;
+        NucleusTimer = 10000;
         }
         else NucleusTimer -= diff;
 
@@ -378,6 +382,8 @@ struct boss_Taldaram_IccAI : public ScriptedAI
      EmpoweredFireballTimer = 6000000;
      SparkTimer = 22000;
      AuraCheck = 1000;
+     pValanar->SetInCombatWithZone();
+     pKeleseth->SetInCombatWithZone();
      }
 
     void JustSummoned(Creature* pSummoned)
