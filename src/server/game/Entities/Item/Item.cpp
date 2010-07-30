@@ -165,7 +165,7 @@ void RemoveItemsSetItem(Player*player,ItemPrototype const *proto)
 
     if (!eff->item_count)                                    //all items of a set were removed
     {
-        assert(eff == player->ItemSetEff[setindex]);
+        ASSERT(eff == player->ItemSetEff[setindex]);
         delete eff;
         player->ItemSetEff[setindex] = NULL;
     }
@@ -1039,7 +1039,7 @@ Item* Item::CreateItem(uint32 item, uint32 count, Player const* player)
             ss << "REPLACE INTO character_feed_log (guid, type, data, counter) VALUES (" << player->GetGUIDLow() << ", 2, " << item << ", 1)";
             CharacterDatabase.PExecute( ss.str().c_str() );
         }
-		assert(count !=0 && "pProto->Stackable == 0 but checked at loading already");
+		ASSERT(count !=0 && "pProto->Stackable == 0 but checked at loading already");
 
         Item *pItem = NewItemOrBag(pProto);
         if (pItem->Create(objmgr.GenerateLowGuid(HIGHGUID_ITEM), item, player))
@@ -1051,7 +1051,7 @@ Item* Item::CreateItem(uint32 item, uint32 count, Player const* player)
             delete pItem;
     }
     else
-        assert(false);
+        ASSERT(false);
     return NULL;
 }
 
