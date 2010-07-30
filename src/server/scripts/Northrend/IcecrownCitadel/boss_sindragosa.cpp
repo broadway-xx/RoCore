@@ -358,7 +358,7 @@ struct boss_sindragosaAI : public ScriptedAI
     {
         me->InterruptSpell(CURRENT_GENERIC_SPELL);
         me->HandleEmoteCommand(EMOTE_ONESHOT_LIFTOFF);
-        me->GetMotionMaster()->MovePoint(0, FlyPosition);
+        me->GetMotionMaster()->MovePoint(1, FlyPosition);
         me->SetReactState(REACT_PASSIVE);
         me->AttackStop();
         me->SetFlying(true);
@@ -369,7 +369,7 @@ struct boss_sindragosaAI : public ScriptedAI
 
     void LandDown()
     {
-        me->GetMotionMaster()->MovePoint(0, SpawnPosition);
+        me->GetMotionMaster()->MovePoint(1, SpawnPosition);
         me->SetFlying(false);
         me->SetReactState(REACT_AGGRESSIVE);
         me->RemoveAllAuras();
@@ -426,7 +426,7 @@ struct boss_sindragosaAI : public ScriptedAI
 
         if(Phase == PHASE_LAND)
         {
-            if ((m_uiPhaseTimer <= uiDiff) || ((me->GetHealth()*100) / me->GetMaxHealth() < 85))
+            if ((m_uiPhaseTimer <= uiDiff) || ((me->GetHealth()*100) / me->GetMaxHealth() == 85))
             {
                 Phase = PHASE_FLY;
                 m_uiPhaseTimer = 60000;
