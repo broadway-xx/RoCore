@@ -5,13 +5,13 @@
 #ifndef DEF_BOSS_SPELL_WORKER_H
 #define DEF_BOSS_SPELL_WORKER_H
 
-#include "precompiled.h"
+#include "ScriptPCH.h"
 #include "Player.h"
 #include "SpellAuras.h"
 #include "SpellMgr.h"
 #include "Unit.h"
 #include "Database/DatabaseEnv.h"
-#include "../ScriptMgr.h"
+#include "ScriptMgr.h"
 
 
 enum
@@ -90,7 +90,7 @@ struct SpellTable
     int32  textEntry;                                  // Text entry from script_text for this spell
 };
 
-struct MANGOS_DLL_DECL BSWScriptedAI : public ScriptedAI
+struct BSWScriptedAI : public ScriptedAI
 {
     public:
         explicit BSWScriptedAI(Creature* pCreature);
@@ -167,7 +167,7 @@ struct MANGOS_DLL_DECL BSWScriptedAI : public ScriptedAI
              {
                  uint8 m_uiSpellIdx = _findSpellIDX(SpellID);
                  if (!queryIndex(m_uiSpellIdx)) return false;
-                 if (!pTarget) pTarget = m_creature;
+                 if (!pTarget) pTarget = me;
                  return _hasAura(m_uiSpellIdx,pTarget);
              };
 
@@ -175,7 +175,7 @@ struct MANGOS_DLL_DECL BSWScriptedAI : public ScriptedAI
              {
                  uint8 m_uiSpellIdx = _findSpellIDX(SpellID);
                  if (!queryIndex(m_uiSpellIdx)) return 0;
-                 if (!pTarget) pTarget = m_creature;
+                 if (!pTarget) pTarget = me;
                  return _auraCount(m_uiSpellIdx,pTarget,index);
              };
 
