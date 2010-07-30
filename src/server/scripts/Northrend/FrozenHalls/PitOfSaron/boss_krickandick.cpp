@@ -284,7 +284,6 @@ struct boss_krickAI : public ScriptedAI
 
         me->SetReactState(REACT_PASSIVE);
         me->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
-        me->SetVisibility(VISIBILITY_OFF);
     }
 
     Creature* GetIck()
