@@ -32,10 +32,6 @@ INSERT INTO `creature` (`guid`,`id`,`map`,`spawnMask`,`phaseMask`,`modelid`,`equ
 ('@GUID+1', 438700, 609, 1, 1, 0, 0, 2392.36, -5639.5, 377.518, 0.616926, 300, 0, 0, 5342, 0, 0, 0),
 ('@GUID+1', 438700, 0, 1, 65535, 0, 0, 2386.39, -5643.9, 421.156, 3.57475, 25, 0, 0, 12, 12, 0, 0);
 
--- Delete an areatrigger teleport to Frozen Throne located in The Spire. Only if you use CTDB.
-
-DELETE FROM `areatrigger_teleport` WHERE (`id`='5718');
-
 -- Argent Tournament
 UPDATE gameobject SET state = 0 WHERE id = 194618;
 DELETE FROM `gameobject_loot_template` WHERE entry = 194618;
