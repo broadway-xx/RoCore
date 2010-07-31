@@ -123,8 +123,8 @@ struct boss_blood_councilAI : public ScriptedAI
       {
        if (pInstance)
        pInstance->SetData(DATA_BLOOD_PRINCE_COUNCIL_EVENT, IN_PROGRESS);
-       DoScriptText(Intro_1,pLanathel);
-       DoStartNoMovement(pLanathel->getVictim());
+       DoScriptText(Intro_1, pLanathel);
+       DoStartMovement(pLanathel, 30.0f);
        PhaseIntro = 1;
       }
       }
