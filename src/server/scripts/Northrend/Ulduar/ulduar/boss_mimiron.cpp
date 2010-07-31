@@ -65,11 +65,7 @@ enum eSpells
     SPELL_EXPLOSION_25                          = 63009,
     
     // VX-001
-    SPELL_RAPID_BURST_TURN                      = 63382,
-    SPELL_RAPID_BURST_L_10                      = 63387,
-    SPELL_RAPID_BURST_L_25                      = 64531,
-    SPELL_RAPID_BURST_R_10                      = 64019,
-    SPELL_RAPID_BURST_R_25                      = 64532,
+    SPELL_RAPID_BURST                           = 63382,
     SPELL_ROCKET_STRIKE                         = 63036,
     SPELL_ROCKET_STRIKE_AURA                    = 64064,
     SPELL_LASER_BARRAGE                         = 63274,
@@ -111,7 +107,6 @@ enum eEvents
     
     // VX-001
     EVENT_RAPID_BURST,
-    EVENT_RAPID_BURST_ROTATE,
     EVENT_PRE_LASER_BARRAGE,
     EVENT_LASER_BARRAGE,
     EVENT_ROCKET_STRIKE,
@@ -160,6 +155,7 @@ enum eActions
 
 enum Npcs
 {
+    NPC_BURST_TARGET        = 34211,
     NPC_JUNK_BOT            = 33855,
     NPC_ASSAULT_BOT         = 34057,
     NPC_BOOM_BOT            = 33836,
@@ -366,13 +362,13 @@ struct boss_mimironAI : public BossAI
                                 if (pVX_001->getStandState() == UNIT_STAND_STATE_DEAD)
                                     if (pAerialUnit->getStandState() == UNIT_STAND_STATE_DEAD)
                                     {
+                                        if (Unit* pTarget = me->SelectNearestTarget())
+                                            pTarget->ToPlayer()->RewardPlayerAndGroupAtKill(pLeviathan);
                                         pLeviathan->DisappearAndDie();
                                         pVX_001->DisappearAndDie();
                                         pAerialUnit->DisappearAndDie();
                                         DespawnCreatures(34050, 100);
                                         me->Kill(me, false);
-                                        if (Player* pTarget = me->SelectNearestTarget()->ToPlayer())
-                                          pTarget->RewardPlayerAndGroupAtKill(pLeviathan);
                                         checkBotAlive = true;
                                     }
             }
@@ -996,7 +992,7 @@ struct boss_vx_001AI : public BossAI
             events.ScheduleEvent(EVENT_FROST_BOMB, 15000);
         }
             
-        events.ScheduleEvent(EVENT_RAPID_BURST_ROTATE, 100, 0, PHASE_VX001_SOLO);
+        events.ScheduleEvent(EVENT_RAPID_BURST, 500, 0, PHASE_VX001_SOLO);
         events.ScheduleEvent(EVENT_PRE_LASER_BARRAGE, urand(35000, 40000), 0, PHASE_VX001_SOLO); // Not works in phase 4 :(
         events.ScheduleEvent(EVENT_ROCKET_STRIKE, 20000);
         events.ScheduleEvent(EVENT_HEAT_WAVE, urand(8000, 10000), 0, PHASE_VX001_SOLO);
@@ -1084,37 +1080,22 @@ struct boss_vx_001AI : public BossAI
             {
                 switch(eventId)
                 {
-                    case EVENT_RAPID_BURST_ROTATE:
-                        me->GetMotionMaster()->MoveRotate(urand(1000,3000), rand()%2 ? ROTATE_DIRECTION_LEFT : ROTATE_DIRECTION_RIGHT);
-                        events.RescheduleEvent(EVENT_RAPID_BURST_ROTATE, 6000, 0, PHASE_VX001_SOLO);
-                        events.RescheduleEvent(EVENT_RAPID_BURST, 500, 0, PHASE_VX001_SOLO);
-                        break;
                     case EVENT_RAPID_BURST:
-                        // HACK for hands alternation (real spell not works)
                         me->GetMotionMaster()->Initialize();
-                        switch(RapidBurst)
-                        {
-                            case 0:
-                                DoCast(RAID_MODE(SPELL_RAPID_BURST_L_10, SPELL_RAPID_BURST_L_25));
-                                break;
-                            case 1:
-                                DoCast(RAID_MODE(SPELL_RAPID_BURST_R_10, SPELL_RAPID_BURST_R_25));
-                                break;
-                        }
-                        RapidBurst++;
-                        if(RapidBurst > 1)
-                            RapidBurst = 0;
-                        events.RescheduleEvent(EVENT_RAPID_BURST, 500, 0, PHASE_VX001_SOLO);
+                        if (Unit *pTarget = SelectTarget(SELECT_TARGET_RANDOM, 0, 100, true))
+                            if (Creature *BurstTarget = me->SummonCreature(NPC_BURST_TARGET, pTarget->GetPositionX(), pTarget->GetPositionY(), pTarget->GetPositionZ(), 0, TEMPSUMMON_TIMED_DESPAWN, 3000))
+                                DoCast(BurstTarget, SPELL_RAPID_BURST);
+                        events.RescheduleEvent(EVENT_RAPID_BURST, 3000, 0, PHASE_VX001_SOLO);
                         break;
                     case EVENT_PRE_LASER_BARRAGE:
                         DoCast(SPELL_SPINNING_UP);
+                        me->GetMotionMaster()->MoveRotate(40000, rand()%2 ? ROTATE_DIRECTION_LEFT : ROTATE_DIRECTION_RIGHT);
                         events.DelayEvents(14000);
                         events.RescheduleEvent(EVENT_PRE_LASER_BARRAGE, 40000, 0, PHASE_VX001_SOLO);
                         events.RescheduleEvent(EVENT_LASER_BARRAGE, 3000);
                         break;
                     case EVENT_LASER_BARRAGE:
                         DoCastAOE(SPELL_LASER_BARRAGE);
-                        me->GetMotionMaster()->MoveRotate(40000, rand()%2 ? ROTATE_DIRECTION_LEFT : ROTATE_DIRECTION_RIGHT);
                         events.CancelEvent(EVENT_LASER_BARRAGE);
                         break;
                     case EVENT_ROCKET_STRIKE:
@@ -1282,14 +1263,20 @@ struct boss_aerial_unitAI : public BossAI
                             float x = me->getVictim()->GetPositionX();
                             float y = me->getVictim()->GetPositionY();
                             float z = me->getVictim()->GetPositionZ();
-                            if (me->IsWithinDist3d(x, y, z, 35))
+                            if (me->IsWithinDist3d(x, y, z, 30))
                             {
-                                me->GetMotionMaster()->Clear(true);
+                                me->GetMotionMaster()->Initialize();
                                 DoCastVictim(RAID_MODE(SPELL_PLASMA_BALL_10, SPELL_PLASMA_BALL_25));
                             }
                             else me->GetMotionMaster()->MovePoint(0, x, y, 380.040);
                         }
-                        else DoCastVictim(RAID_MODE(SPELL_PLASMA_BALL_10, SPELL_PLASMA_BALL_25));
+                        else if (phase == PHASE_AERIAL_ASSEMBLED && me->getVictim())
+                        {
+                            if (me->getVictim()->IsWithinDist3d(me->GetPositionX(), me->GetPositionY(), me->GetPositionZ(), 35))
+                                DoCastVictim(RAID_MODE(SPELL_PLASMA_BALL_10, SPELL_PLASMA_BALL_25));
+                            else if (Unit *pTarget = SelectUnit(SELECT_TARGET_NEAREST, 0))
+                                DoCast(pTarget, RAID_MODE(SPELL_PLASMA_BALL_10, SPELL_PLASMA_BALL_25));
+                        }
                         events.RescheduleEvent(EVENT_PLASMA_BALL, 2000);
                         break;
                     case EVENT_REACTIVATE_AERIAL:
