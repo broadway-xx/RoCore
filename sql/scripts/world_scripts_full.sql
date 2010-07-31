@@ -1570,7 +1570,7 @@ update creature_template set AIName='TurretAI',scriptname='' where entry=33139;
 update creature_template set ScriptName='boss_kologarn' where entry=32930;
 update creature_template set scriptname="boss_flame_leviathan_safety_container" where entry=33218;
 
-DELETE FROM spell_script_names WHERE spell_id=19958 AND ScriptName='spell_mage_cold_snap';
+DELETE FROM spell_script_names WHERE spell_id=11958 AND ScriptName='spell_mage_cold_snap';
 DELETE FROM spell_script_names WHERE spell_id=32826 AND ScriptName='spell_mage_polymorph_visual';
 DELETE FROM spell_script_names WHERE spell_id=31687 AND ScriptName='spell_mage_summon_water_elemental';
 DELETE FROM spell_script_names WHERE spell_id=-47540 AND ScriptName='spell_pri_penance';
