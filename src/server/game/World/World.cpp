@@ -1731,7 +1731,9 @@ void World::SetInitialWorldSettings()
     sLog.outString("Starting Outdoor PvP System");
     sOutdoorPvPMgr.InitOutdoorPvP();
 
-    //Not sure if this can be moved up in the sequence (with static data loading) as it uses MapManager
+    sLog.outString("Loading Transport NPCs...");
+    sMapMgr.LoadTransportNPCs();
+
     sLog.outString("Loading Transports...");
     sMapMgr.LoadTransports();
 
