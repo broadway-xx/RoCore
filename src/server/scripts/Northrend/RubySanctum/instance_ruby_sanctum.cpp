@@ -63,7 +63,7 @@ struct instance_ruby_sanctum : public ScriptedInstance
 			break;
 		case NPC_HALION:
 			m_uiHalionGUID = pCreature->GetGUID();
-			if(pInstance->GetData(DATA_BALTHARUS_EVENT) == DONE && pInstance->GetData(DATA_RAGEFIRE_EVENT) == DONE && pInstance->GetData(DATA_ZARITHRIAN_EVENT) == DONE)
+			if(m_pInstance->GetData(DATA_BALTHARUS_EVENT) == DONE && m_pInstance->GetData(DATA_RAGEFIRE_EVENT) == DONE && m_pInstance->GetData(DATA_ZARITHRIAN_EVENT) == DONE)
 			{
 				pCreature->SetReactState(REACT_PASSIVE);
 				pCreature->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);

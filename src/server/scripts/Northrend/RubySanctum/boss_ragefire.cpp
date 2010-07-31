@@ -120,16 +120,16 @@ struct boss_ragefireAI : public ScriptedAI
 				me->GetMotionMaster()->MovePoint(1, 3159.04, 676.08, 103.05);
 				if(pInstance->instance->GetDifficulty() == RAID_DIFFICULTY_10MAN_NORMAL)
 				{
-					pConflagrationTarget1 = Unit::GetPlayer(SelectUnit(SELECT_TARGET_RANDOM, 0)->GetGUID());
-					pConflagrationTarget2 = Unit::GetPlayer(SelectUnit(SELECT_TARGET_RANDOM, 0)->GetGUID());
+					pConflagrationTarget1 = Unit::GetPlayer(*me, SelectUnit(SELECT_TARGET_RANDOM, 0)->GetGUID());
+					pConflagrationTarget2 = Unit::GetPlayer(*me, SelectUnit(SELECT_TARGET_RANDOM, 0)->GetGUID());
 				}
 				else
 				{
-					pConflagrationTarget1 = Unit::GetPlayer(SelectUnit(SELECT_TARGET_RANDOM, 0)->GetGUID());
-					pConflagrationTarget2 = Unit::GetPlayer(SelectUnit(SELECT_TARGET_RANDOM, 0)->GetGUID());
-					pConflagrationTarget3 = Unit::GetPlayer(SelectUnit(SELECT_TARGET_RANDOM, 0)->GetGUID());
-					pConflagrationTarget4 = Unit::GetPlayer(SelectUnit(SELECT_TARGET_RANDOM, 0)->GetGUID());
-					pConflagrationTarget5 = Unit::GetPlayer(SelectUnit(SELECT_TARGET_RANDOM, 0)->GetGUID());
+					pConflagrationTarget1 = Unit::GetPlayer(*me, SelectUnit(SELECT_TARGET_RANDOM, 0)->GetGUID());
+					pConflagrationTarget2 = Unit::GetPlayer(*me, SelectUnit(SELECT_TARGET_RANDOM, 0)->GetGUID());
+					pConflagrationTarget3 = Unit::GetPlayer(*me, SelectUnit(SELECT_TARGET_RANDOM, 0)->GetGUID());
+					pConflagrationTarget4 = Unit::GetPlayer(*me, SelectUnit(SELECT_TARGET_RANDOM, 0)->GetGUID());
+					pConflagrationTarget5 = Unit::GetPlayer(*me, SelectUnit(SELECT_TARGET_RANDOM, 0)->GetGUID());
 				}
 				uiAirSteps++;
 				break;
