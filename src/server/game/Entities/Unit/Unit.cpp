@@ -8060,6 +8060,10 @@ bool Unit::HandleProcTriggerSpell(Unit *pVictim, uint32 damage, AuraEffect* trig
                             CastSpell(pVictim, 27526, true, castItem, triggeredByAura);
                         return true;
                     }
+	                    // Mark of the Fallen Champion (boss spell)
+                    case 72293:
+                        CastSpell(pVictim, trigger_spell_id, true, NULL, NULL, pVictim->GetGUID());
+                        return true;
                 }
                 break;
             case SPELLFAMILY_MAGE:
