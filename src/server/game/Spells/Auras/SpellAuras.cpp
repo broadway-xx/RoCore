@@ -1320,6 +1320,22 @@ void Aura::HandleAuraSpecificMods(AuraApplication const * aurApp, Unit * caster,
                     break;
             }
             break;
+
+			// Bone Storm
+	        if (GetSpellProto()->SpellIconID == 2836)
+	        {
+	            if (target->HasAura(69076))
+	            {
+		            if(AuraApplication * aura = target->GetAuraApplication(69076, 0))
+		            {
+                        aura->GetBase()->SetDuration(20000);
+                        aura->GetBase()->SetMaxDuration(20000);
+                        aura->ClientUpdate();
+		            }
+	            }
+	            break;
+	        }
+
         case SPELLFAMILY_ROGUE:
             // Stealth
             if (GetSpellProto()->SpellFamilyFlags[0] & 0x00400000)
