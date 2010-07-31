@@ -1581,6 +1581,7 @@ DELETE FROM spell_script_names WHERE spell_id=5938 AND ScriptName='spell_rog_shi
 DELETE FROM spell_script_names WHERE spell_id=53271 AND ScriptName='spell_hun_masters_call';
 DELETE FROM spell_script_names WHERE spell_id=53478 AND ScriptName='spell_hun_last_stand_pet';
 DELETE FROM spell_script_names WHERE spell_id=23989 AND ScriptName='spell_hun_readiness';
+DELETE FROM spell_script_names WHERE spell_id IN (11958,32826,31687,-47540,31231,51662,14185,5938,53271,53478,23989);
 INSERT INTO spell_script_names (spell_id, ScriptName) VALUES 
 (11958,'spell_mage_cold_snap'),
 (32826,'spell_mage_polymorph_visual'),
