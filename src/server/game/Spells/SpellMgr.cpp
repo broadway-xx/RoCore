@@ -29,8 +29,6 @@
 #include "BattleGroundMgr.h"
 #include "CreatureAI.h"
 #include "MapManager.h"
-#include "OutdoorPvPWG.h"
-#include "OutdoorPvPMgr.h"
 
 bool IsAreaEffectTarget[TOTAL_SPELL_TARGETS];
 SpellEffectTargetTypes EffectTargetType[TOTAL_SPELL_EFFECTS];
@@ -3064,7 +3062,6 @@ DiminishingReturnsType GetDiminishingReturnsGroupType(DiminishingGroup group)
 
 bool SpellArea::IsFitToRequirements(Player const* player, uint32 newZone, uint32 newArea) const
 {
-	OutdoorPvPWG *pvpWG = (OutdoorPvPWG*)sOutdoorPvPMgr.GetOutdoorPvPToZoneId(4197);
     if (gender != GENDER_NONE)                   // not in expected gender
         if (!player || gender != player->getGender())
             return false;
@@ -3088,28 +3085,6 @@ bool SpellArea::IsFitToRequirements(Player const* player, uint32 newZone, uint32
     if (auraSpell)                               // not have expected aura
         if (!player || auraSpell > 0 && !player->HasAura(auraSpell) || auraSpell < 0 && player->HasAura(-auraSpell))
             return false;
-
-    // Extra conditions
-    switch(spellId)
-    {
-        case 58600: // No fly Zone - Dalaran (Krasus Landing exception)
-            if (!player || player->GetAreaId() == 4564 || !player->HasAuraType(SPELL_AURA_MOD_INCREASE_MOUNTED_FLIGHT_SPEED) && !player->HasAuraType(SPELL_AURA_FLY)
-                || player->HasAura(44795))
-                return false;
-            break;
-        case 58730: // No fly Zone - Wintergrasp
-            if ((pvpWG->isWarTime() == false) || !player || !player->HasAuraType(SPELL_AURA_MOD_INCREASE_MOUNTED_FLIGHT_SPEED) && !player->HasAuraType(SPELL_AURA_FLY)
-               || player->HasAura(45472) || player->HasAura(44795))
-                return false;
-            break;
-       case 58045: // Essence of Wintergrasp - Wintergrasp
-        case 57940: // Essence of Wintergrasp - Northrend
-            if (!player || player->GetTeamId() != sWorld.getWorldState(WORLDSTATE_WINTERGRASP_CONTROLING_FACTION))
-                return false;
-            break;
-   }
-
-    return true;
 
     // Extra conditions -- leaving the possibility add extra conditions...
     switch(spellId)
@@ -3666,7 +3641,6 @@ void SpellMgr::LoadSpellCustomAttr()
             break;
         case 44978: case 45001: case 45002:     // Wild Magic
         case 45004: case 45006: case 45010:     // Wild Magic
-        case 25425: case 45761: case 42611:     // Shoot
         case 31347: // Doom
         case 41635: // Prayer of Mending
         case 44869: // Spectral Blast
@@ -3677,12 +3651,10 @@ void SpellMgr::LoadSpellCustomAttr()
         case 52124: // Sky Darkener Assault
         case 42442: // Vengeance Landing Cannonfire
         case 45863: // Cosmetic - Incinerate to Random Target
+        case 25425: // Shoot
+        case 45761: // Shoot
+        case 42611: // Shoot
         case 62374: // Pursued
-        case 63024: // Gravity Bomb Normal
-        case 64234: // Gravity Bomb Hero
-        case 63018: // Searing Light Normal
-        case 65121: // Searing Light Hero
-        case 62016: // Charge Orb
             spellInfo->MaxAffectedTargets = 1;
             count++;
             break;
@@ -3792,24 +3764,6 @@ void SpellMgr::LoadSpellCustomAttr()
             spellInfo->EffectRadiusIndex[0] = 37;
             count++;
             break;
-        case 18754: // Improved succubus - problems with apply if target is pet
-            spellInfo->EffectApplyAuraName[0] = SPELL_AURA_ADD_FLAT_MODIFIER;    // it's affects duration of seduction, let's minimize affection
-            spellInfo->EffectBasePoints[0] = -1.5*IN_MILLISECONDS*0.22;           // reduce cast time of seduction by 22% 
-            spellInfo->EffectImplicitTargetA[0] = TARGET_UNIT_CASTER;
-            count++;
-            break;
-        case 18755:
-            spellInfo->EffectApplyAuraName[0] = SPELL_AURA_ADD_FLAT_MODIFIER;
-            spellInfo->EffectBasePoints[0] = -1.5*IN_MILLISECONDS*0.44;           //  reduce cast time of seduction by 44%
-            spellInfo->EffectImplicitTargetA[0] = TARGET_UNIT_CASTER;
-            count++;
-            break;
-        case 18756:
-            spellInfo->EffectApplyAuraName[0] = SPELL_AURA_ADD_FLAT_MODIFIER;
-            spellInfo->EffectBasePoints[0] = -1.5*IN_MILLISECONDS*0.66;           //  reduce cast time of seduction by 66%
-            spellInfo->EffectImplicitTargetA[0] = TARGET_UNIT_CASTER;
-            count++;
-            break;
         // Master Shapeshifter: missing stance data for forms other than bear - bear version has correct data
         // To prevent aura staying on target after talent unlearned
         case 48420:
@@ -3883,16 +3837,6 @@ void SpellMgr::LoadSpellCustomAttr()
             // may be db data bug, or blizz may keep reapplying area auras every update with checking immunity
             // that will be clear if we get more spells with problem like this
             spellInfo->AttributesEx |= SPELL_ATTR_EX_DISPEL_AURAS_ON_IMMUNITY;
-            count++;
-            break;
-        case 62345:     // Ram (Ulduar Siege)
-        case 62308:     // Ram (Ulduar Demolisher)
-            spellInfo->Effect[0] = 0;
-            count++;
-            break;
-        case 63676:     // Focused Eyebeam Visual 2
-        case 63702:     // Focused Eyebeam Visual Right Eye
-            spellInfo->EffectImplicitTargetA[0] = 92;
             count++;
             break;
         default:

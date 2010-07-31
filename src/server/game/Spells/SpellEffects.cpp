@@ -50,7 +50,6 @@
 #include "BattleGroundEY.h"
 #include "BattleGroundWS.h"
 #include "OutdoorPvPMgr.h"
-#include "OutdoorPvPWG.h"
 #include "Language.h"
 #include "SocialMgr.h"
 #include "Util.h"
@@ -63,7 +62,6 @@
 #include "Formulas.h"
 #include "Vehicle.h"
 #include "ScriptMgr.h"
-#include "Chat.h"
 
 pEffect SpellEffects[TOTAL_SPELL_EFFECTS]=
 {
@@ -593,9 +591,6 @@ void Spell::SpellDamageSchoolDmg(uint32 effect_idx)
                         }
                     }
                 }
-                // Improved Devouring Plague should not get any bonus
-        else if (m_spellInfo->Id == 63675)
-          apply_direct_bonus = false;
                 break;
             }
             case SPELLFAMILY_DRUID:
@@ -674,9 +669,6 @@ void Spell::SpellDamageSchoolDmg(uint32 effect_idx)
                         // Eviscerate and Envenom Bonus Damage (item set effect)
                         if (m_caster->HasAura(37169))
                             damage += combo*40;
-                        // Apply spell mods
-                        if (Player* modOwner = m_caster->GetSpellModOwner())
-                            modOwner->ApplySpellMod(m_spellInfo->Id, SPELLMOD_DAMAGE, damage);
                     }
                 }
                 break;
@@ -746,17 +738,15 @@ void Spell::SpellDamageSchoolDmg(uint32 effect_idx)
                 else if (m_spellInfo->Id == 20187)
                 {
                     float ap = m_caster->GetTotalAttackPowerValue(BASE_ATTACK);
-                    float sp = m_caster->SpellBaseDamageBonus(GetSpellSchoolMask(m_spellInfo)) +
-                               m_caster->SpellBaseDamageBonusForVictim(GetSpellSchoolMask(m_spellInfo), unitTarget);
-                    damage += int32(0.225f*ap + 0.355f*sp);
+                    float sp = m_caster->SpellBaseDamageBonus(GetSpellSchoolMask(m_spellInfo));
+                    damage += int32(0.2f*ap + 0.32f*sp);
                 }
                 // Judgement of Wisdom, Light, Justice
                 else if (m_spellInfo->Id == 54158)
                 {
                     float ap = m_caster->GetTotalAttackPowerValue(BASE_ATTACK);
-                    float sp = m_caster->SpellBaseDamageBonus(GetSpellSchoolMask(m_spellInfo)) +
-                               m_caster->SpellBaseDamageBonusForVictim(GetSpellSchoolMask(m_spellInfo), unitTarget);
-                    damage += int32(ap * 0.175f) + int32(sp * 0.27f);
+                    float sp = m_caster->SpellBaseDamageBonus(GetSpellSchoolMask(m_spellInfo));
+                    damage += int32(0.14f*ap + 0.22f*sp);
                 }
                 break;
             }
@@ -1443,13 +1433,6 @@ void Spell::EffectDummy(uint32 i)
                         return;
                     m_caster->CastCustomSpell(unitTarget, 52752, &damage, NULL, NULL, true);
                     return;
-            case 53341:                                 // Rune of Cinderglacier
-            case 53343:                                 // Rune of Razorice
-            {
-                // Runeforging Credit
-                m_caster->CastSpell(m_caster, 54586, true);
-                return;
-            }
                 case 54171:                                   //Divine Storm
                 {
                     m_caster->CastCustomSpell(unitTarget, 54172, &damage, 0, 0, true);
@@ -3247,34 +3230,7 @@ void Spell::SendLoot(uint64 guid, LootType loottype)
                 return;
 
             case GAMEOBJECT_TYPE_GOOBER:
-                // goober_scripts can be triggered if the player don't have the quest
-                if (gameObjTarget->GetGOInfo()->goober.eventId)
-                {
-                    sLog.outDebug("Goober ScriptStart id %u for GO %u", gameObjTarget->GetGOInfo()->goober.eventId,gameObjTarget->GetDBTableGUIDLow());
-                    player->GetMap()->ScriptsStart(sEventScripts, gameObjTarget->GetGOInfo()->goober.eventId, player, gameObjTarget);
-                    gameObjTarget->EventInform(gameObjTarget->GetGOInfo()->goober.eventId);
-                }
-
-                // cast goober spell
-                if (gameObjTarget->GetGOInfo()->goober.questId)
-                    ///Quest require to be active for GO using
-                    if(player->GetQuestStatus(gameObjTarget->GetGOInfo()->goober.questId) != QUEST_STATUS_INCOMPLETE)
-                        return;
-
-               gameObjTarget->GetMap()->ScriptsStart(sGameObjectScripts, gameObjTarget->GetDBTableGUIDLow(), player, gameObjTarget);
-
-                gameObjTarget->AddUniqueUse(player);
-                gameObjTarget->SetLootState(GO_JUST_DEACTIVATED);
-
-                //TODO? Objective counting called without spell check but with quest objective check
-                // if send spell id then this line will duplicate to spell casting call (double counting)
-                // So we or have this line and not required in quest_template have reqSpellIdN
-                // or must remove this line and required in DB have data in quest_template have reqSpellIdN for all quest using cases.
-                player->CastedCreatureOrGO(gameObjTarget->GetEntry(), gameObjTarget->GetGUID(), 0);
-
-                // triggering linked GO
-                if(uint32 trapEntry = gameObjTarget->GetGOInfo()->goober.linkedTrapId)
-                    gameObjTarget->TriggeringLinkedGameObject(trapEntry,m_caster);
+                gameObjTarget->Use(m_caster);
                 return;
 
             case GAMEOBJECT_TYPE_CHEST:
@@ -6039,17 +5995,13 @@ void Spell::EffectScriptEffect(uint32 effIndex)
                 // Guarded by The Light
                 case 63521:
                 {
-                    // Refresh Divine Plea on target (3 aura slots)
-                    Unit::AuraApplicationMap& Auras = unitTarget->GetAppliedAuras();
-                    for(Unit::AuraApplicationMap::iterator itr = Auras.begin(); itr != Auras.end(); ++itr)
-					{
-						if((*itr).second->GetBase()->GetId() == 54428)
-						(*itr).second->GetBase()->SetDuration(15000);
-					}
+                    // Divine Plea
+                    if (Aura * aura = m_caster->GetAura(54428))
+                        aura->RefreshDuration();
                     return;
-				}
-			}
-                    break;
+                }
+            }
+            break;
         }
         case SPELLFAMILY_PRIEST:
         {
@@ -7889,28 +7841,13 @@ void Spell::EffectPlayerNotification(uint32 /*eff_idx*/)
     if (!unitTarget || unitTarget->GetTypeId() != TYPEID_PLAYER)
         return;
 
-    OutdoorPvPWG *pvpWG = (OutdoorPvPWG*)sOutdoorPvPMgr.GetOutdoorPvPToZoneId(4197);
-
     switch(m_spellInfo->Id)
     {
         case 58730: // Restricted Flight Area
-        {
-             if (pvpWG->isWarTime())
-			 {
-             unitTarget->ToPlayer()->GetSession()->SendNotification(LANG_ZONE_NOFLYZONE);
-            unitTarget->PlayDirectSound(9417); // Fel Reaver sound
-             ChatHandler((Player*)unitTarget).PSendSysMessage("The air is too thin in Wintergrasp for normal flight. You will be ejected in 9 sec.");
-             break;
-			 } else break;
-			}
-         case 58600: // Restricted Flight Area
-			{
-             unitTarget->ToPlayer()->GetSession()->SendNotification(LANG_ZONE_NOFLYZONE);
-             unitTarget->PlayDirectSound(9417); // Fel Reaver sound
-             ChatHandler((Player*)unitTarget).PSendSysMessage("The air over Dalaran is protected. You will be ejected in 9 sec.");
-             break;
-			}
-     }
+        case 58600: // Restricted Flight Area
+            unitTarget->ToPlayer()->GetSession()->SendNotification(LANG_ZONE_NOFLYZONE);
+            break;
+    }
 }
 
 void Spell::EffectRemoveAura(uint32 i)

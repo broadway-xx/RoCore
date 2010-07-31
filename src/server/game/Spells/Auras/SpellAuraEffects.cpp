@@ -32,7 +32,6 @@
 #include "SpellAuraEffects.h"
 #include "BattleGround.h"
 #include "OutdoorPvPMgr.h"
-#include "OutdoorPvPWG.h"
 #include "Formulas.h"
 #include "GridNotifiers.h"
 #include "GridNotifiersImpl.h"
@@ -1066,29 +1065,6 @@ void AuraEffect::UpdatePeriodic(Unit * caster)
                         --m_amount;
                     break;
             }
-/*               // Lady Deathwhisper - Mana Barrier
-                case 70842:
-                {
-                    Unit * caster = GetBase()->GetUnitOwner();
- 					if (!caster || !caster->ToCreature() || (caster->GetEntry() != 36855))
-                        break;
- 
-                    uint32 hp_to_restore = caster->GetMaxHealth() - caster->GetHealth();
-                    uint32 cur_mana = caster->GetPower(POWER_MANA);
- 
-                    if (!cur_mana)
-                        GetBase()->Remove(AURA_REMOVE_BY_EXPIRE);
- 
-                    if (hp_to_restore)
-                    {
-                        if (cur_mana < hp_to_restore)
-                            hp_to_restore = cur_mana;
- 
-                        caster->SetHealth(caster->GetHealth() + hp_to_restore);
-                        caster->SetPower(POWER_MANA, caster->GetPower(POWER_MANA) - hp_to_restore);
-                    }
-                break;
-				}*/
             break;
         case SPELL_AURA_PERIODIC_DUMMY:
             switch(GetSpellProto()->SpellFamilyName)
@@ -1820,7 +1796,6 @@ void AuraEffect::PeriodicTick(Unit * target, Unit * caster) const
 
 void AuraEffect::PeriodicDummyTick(Unit * target, Unit * caster) const
 {
-	OutdoorPvPWG *pvpWG = (OutdoorPvPWG*)sOutdoorPvPMgr.GetOutdoorPvPToZoneId(4197);
     switch (GetSpellProto()->SpellFamilyName)
     {
         case SPELLFAMILY_GENERIC:
@@ -1872,24 +1847,6 @@ void AuraEffect::PeriodicDummyTick(Unit * target, Unit * caster) const
                 }
                 else
                     target->RemoveAurasDueToSpell(58670);
-                break;
-           case 58730: // No Fly Zone - Wintergrasp
-				{
-			    if (pvpWG->isWarTime() == false)
-	                    break;
-                if (GetTickNumber() == 10)
-                {
-                    target->RemoveAurasByType(SPELL_AURA_MOD_INCREASE_MOUNTED_FLIGHT_SPEED);
-                    target->RemoveAurasByType(SPELL_AURA_FLY);
-                }
-                break;
-				}
-            case 58600: // No fly Zone - Dalaran
-                if (GetTickNumber() == 10)
-                {
-                    target->RemoveAurasByType(SPELL_AURA_MOD_INCREASE_MOUNTED_FLIGHT_SPEED);
-                    target->RemoveAurasByType(SPELL_AURA_FLY);
-                }
                 break;
             case 62292: // Blaze (Pool of Tar)
                 // should we use custom damage?
@@ -2279,23 +2236,16 @@ void AuraEffect::TriggerSpell(Unit * target, Unit * caster) const
                     case 53302:
                     case 53303:
                     case 53304:
-                        static bool CastOnMove;
-                        // We have started moving
-                        if (GetAmount() >= 0)
-                            if (CastOnMove) {
-                                CastOnMove = false;
-                                triggerSpellId = 64418 + auraId - 53302;
-                           }
-                            else
-                                return;
+                        // We are standing at the moment
+                        if (GetAmount() != -1)
+                            return;
 
-                        else {
-                            triggerSpellId = 64418 + auraId - 53302;
-                           CastOnMove = true;
-                            // If aura is active - no need to continue
-                            if (target->HasAura(triggerSpellId))
-                                return;
-                       }                       break;
+                        triggerSpellId = 64418 + auraId - 53302;
+
+                        // If aura is active - no need to continue
+                        if (target->HasAura(triggerSpellId))
+                            return;
+                       break;
                 }
                 break;
             }
@@ -2495,8 +2445,7 @@ void AuraEffect::HandleShapeshiftBoosts(Unit * target, bool apply) const
             spellId2 = 27795;                               // must be second, this important at aura remove to prevent to early iterator invalidation.
             break;
         case FORM_SHADOW:
-            spellId  = 49868;
-            spellId2 = 71167;
+            spellId = 49868;
             break;
         case FORM_GHOSTWOLF:
             spellId = 67116;
@@ -4204,15 +4153,10 @@ void AuraEffect::HandleModStateImmunityMask(AuraApplication const * aurApp, uint
 
     // Patch 3.0.3 Bladestorm now breaks all snares and roots on the warrior when activated.
     // however not all mechanic specified in immunity
-    if (GetId() == 46924)
+    if (apply && GetId() == 46924)
     {
-        target->ApplySpellImmune(GetId(), IMMUNITY_ID, 13810, apply);   // Frost Trap
-        target->ApplySpellImmune(GetId(), IMMUNITY_ID, 55741, apply);   // Desecration Rank 1
-        target->ApplySpellImmune(GetId(), IMMUNITY_ID, 68766, apply);   // Desecration Rank 2
-        target->ApplySpellImmune(GetId(), IMMUNITY_ID, 605, apply);     // Mind Control
-        target->ApplySpellImmune(GetId(), IMMUNITY_STATE, SPELL_AURA_TRANSFORM, apply);
-        target->ApplySpellImmune(GetId(), IMMUNITY_EFFECT, SPELL_EFFECT_KNOCK_BACK, apply);
-        target->ApplySpellImmune(GetId(), IMMUNITY_MECHANIC, IMMUNE_TO_MOVEMENT_IMPAIRMENT_AND_LOSS_CONTROL_MASK, apply);
+        target->RemoveAurasByType(SPELL_AURA_MOD_ROOT);
+        target->RemoveAurasByType(SPELL_AURA_MOD_DECREASE_SPEED);
     }
 
     if (apply && GetSpellProto()->AttributesEx & SPELL_ATTR_EX_DISPEL_AURAS_ON_IMMUNITY)
@@ -5517,8 +5461,6 @@ void AuraEffect::HandleAuraDummy(AuraApplication const * aurApp, uint8 mode, boo
 
     Unit * target = aurApp->GetTarget();
 
-	OutdoorPvPWG *pvpWG = (OutdoorPvPWG*)sOutdoorPvPMgr.GetOutdoorPvPToZoneId(4197);
-
     Unit * caster = GetCaster();
 
     if (mode & AURA_EFFECT_HANDLE_REAL)
@@ -5727,28 +5669,6 @@ void AuraEffect::HandleAuraDummy(AuraApplication const * aurApp, uint8 mode, boo
                 case SPELLFAMILY_GENERIC:
                     switch(GetId())
                     {
-		      case 58600: // Restricted Flight Area
-                        {
-				if (!target || target->GetAreaId() != 4395) break;
-                     // Remove Flight Auras
-				target->RemoveAurasByType(SPELL_AURA_MOD_INCREASE_MOUNTED_FLIGHT_SPEED);
-                                target->RemoveAurasByType(SPELL_AURA_FLY);
-                                target->CastSpell(target, 61286, true);
-                      // Parachute
-                                target->CastSpell(target, 45472, true);
-                                break;
-                        }
-		      case 58730: // Restricted Flight Area
-                        {
-				if (!target || (((target->GetAreaId() != 4197 && pvpWG->isWarTime() == false)) && (target->GetAreaId() != 4585) && (target->GetAreaId() != 4612) && (target->GetAreaId() != 4582) && (target->GetAreaId() != 4583) && (target->GetAreaId() != 4589) && (target->GetAreaId() != 4575) && (target->GetAreaId() != 4538) && (target->GetAreaId() != 4577))) break;
-                      // Remove Flight Auras
-				target->RemoveAurasByType(SPELL_AURA_MOD_INCREASE_MOUNTED_FLIGHT_SPEED);
-                                target->RemoveAurasByType(SPELL_AURA_FLY);
-                                target->CastSpell(target, 61286, true);
-                      // Parachute
-                                target->CastSpell(target, 45472, true);
-                                break;
-                        }
                         case 2584: // Waiting to Resurrect
                             // Waiting to resurrect spell cancel, we must remove player from resurrect queue
                             if (target->GetTypeId() == TYPEID_PLAYER)

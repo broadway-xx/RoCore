@@ -53,8 +53,6 @@
 #include "ConditionMgr.h"
 #include "DisableMgr.h"
 #include "SpellScript.h"
-#include "OutdoorPvPWG.h"
-#include "OutdoorPvPMgr.h"
 
 #define SPELL_CHANNEL_UPDATE_INTERVAL (1 * IN_MILLISECONDS)
 
@@ -1236,15 +1234,6 @@ void Spell::DoAllEffectOnTarget(TargetInfo *target)
 
         caster->DealSpellDamage(&damageInfo, true);
 
-    /*// Divine Storm (use m_healthLeech to store damage for all targets)
-        if (m_spellInfo->Id == 53385)
-    {
-            m_healthLeech += damageInfo.damage;
-
-      if(Aura * pGlyph = caster->GetAura(63220, 0))
-                m_healthLeech += (m_healthLeech * pGlyph->GetAmount() / 100);
-    }*/
-
         // Haunt
         if (m_spellInfo->SpellFamilyName == SPELLFAMILY_WARLOCK && m_spellInfo->SpellFamilyFlags[1] & 0x40000 && m_spellAura && m_spellAura->GetEffect(1))
         {
@@ -1435,12 +1424,14 @@ SpellMissInfo Spell::DoSpellHitOnUnit(Unit *unit, const uint32 effectMask, bool 
                 int32 duration = m_spellAura->GetMaxDuration();
                 int32 limitduration = GetDiminishingReturnsLimitDuration(m_diminishGroup,aurSpellInfo);
                 float diminishMod = unit->ApplyDiminishingToDuration(m_diminishGroup, duration, m_originalCaster, m_diminishLevel,limitduration);
+
                 // unit is immune to aura if it was diminished to 0 duration
-               if (diminishMod == 0.0f)
+                if (diminishMod == 0.0f)
                 {
                     m_spellAura->Remove();
                     return SPELL_MISS_IMMUNE;
                 }
+
                 ((UnitAura*)m_spellAura)->SetDiminishGroup(m_diminishGroup);
 
                 bool positive = IsPositiveSpell(m_spellAura->GetId());
@@ -1453,36 +1444,6 @@ SpellMissInfo Spell::DoSpellHitOnUnit(Unit *unit, const uint32 effectMask, bool 
                 //mod duration of channeled aura by spell haste
                 if (IsChanneledSpell(m_spellInfo))
                     m_originalCaster->ModSpellCastTime(aurSpellInfo, duration, this);
-
-                // Seduction with Improved Succubus talent - fix duration.
-                if (m_spellInfo->Id == 6358 && unit->GetTypeId() == TYPEID_PLAYER && m_originalCaster->GetOwner())
-                {
-                    float mod = 1.0f;
-                    float durationadd = 0.0f;
-                    
-                    if (m_originalCaster->GetOwner()->HasAura(18754))
-                        durationadd += float(1.5*IN_MILLISECONDS*0.22);
-                    else if (m_originalCaster->GetOwner()->HasAura(18755))
-                        durationadd += float(1.5*IN_MILLISECONDS*0.44);
-                    else if (m_originalCaster->GetOwner()->HasAura(18756))
-                        durationadd += float(1.5*IN_MILLISECONDS*0.66);
-
-                    if (durationadd)
-                    {
-                        switch (m_diminishLevel)
-                        {
-                        case DIMINISHING_LEVEL_1: break;
-                        // lol, we lost 1 second here
-                        case DIMINISHING_LEVEL_2: duration += 1000; mod = 0.5f; break;
-                        case DIMINISHING_LEVEL_3: duration += 1000; mod = 0.25f; break;
-                        case DIMINISHING_LEVEL_IMMUNE: { m_spellAura->Remove(); return SPELL_MISS_IMMUNE; }
-                        default: break;
-                        }
-                        durationadd *= mod;
-                        duration += int32(durationadd);
-                    }
-                }
-
 
                 if (duration != m_spellAura->GetMaxDuration())
                 {
@@ -1770,7 +1731,7 @@ void Spell::SearchAreaTarget(std::list<Unit*> &TagUnitMap, float radius, SpellNo
 {
     if (TargetType == SPELL_TARGETS_GO)
         return;
-
+    
     Position *pos;
     switch(type)
     {
@@ -1819,7 +1780,7 @@ void Spell::SearchGOAreaTarget(std::list<GameObject*> &TagGOMap, float radius, S
     {
         case PUSH_DST_CENTER:
             CheckDst();
-           pos = &m_targets.m_dstPos;
+            pos = &m_targets.m_dstPos;
             break;
         case PUSH_SRC_CENTER:
             CheckSrc();
@@ -2396,6 +2357,11 @@ void Spell::SelectEffectTargets(uint32 i, uint32 cur)
                 radius = GetSpellRadius(m_spellInfo, i, IsPositiveSpell(m_spellInfo->Id));
                 targetType = SPELL_TARGETS_ENTRY;
                 break;
+            case TARGET_GAMEOBJECT_AREA_SRC:
+            case TARGET_GAMEOBJECT_AREA_DST:
+                radius = GetSpellRadius(m_spellInfo, i, true);
+                targetType = SPELL_TARGETS_GO;
+                break;
             default:
                 radius = GetSpellRadius(m_spellInfo, i, true);
                 targetType = SPELL_TARGETS_NONE;
@@ -2412,14 +2378,14 @@ void Spell::SelectEffectTargets(uint32 i, uint32 cur)
         {
             case SPELL_TARGETS_ENTRY:
             {
-               ConditionList conditions = sConditionMgr.GetConditionsForNotGroupedEntry(CONDITION_SOURCE_TYPE_SPELL_SCRIPT_TARGET, m_spellInfo->Id);
+                ConditionList conditions = sConditionMgr.GetConditionsForNotGroupedEntry(CONDITION_SOURCE_TYPE_SPELL_SCRIPT_TARGET, m_spellInfo->Id);
                 if (!conditions.empty())
                 {
                     for (ConditionList::const_iterator i_spellST = conditions.begin(); i_spellST != conditions.end(); ++i_spellST)
                     {
                         if ((*i_spellST)->mConditionType != CONDITION_SPELL_SCRIPT_TARGET)
                             continue;
-                       if ((*i_spellST)->mConditionValue1 == SPELL_TARGET_TYPE_CREATURE)
+                        if ((*i_spellST)->mConditionValue1 == SPELL_TARGET_TYPE_CREATURE)
                             SearchAreaTarget(unitList, radius, pushType, SPELL_TARGETS_ENTRY, (*i_spellST)->mConditionValue2);
                         else if ((*i_spellST)->mConditionValue1 == SPELL_TARGET_TYPE_CONTROLLED)
                         {
@@ -2433,7 +2399,7 @@ void Spell::SelectEffectTargets(uint32 i, uint32 cur)
                 else
                 {
                     // Custom entries
-                   // TODO: move these to sql
+                    // TODO: move these to sql
                     switch (m_spellInfo->Id)
                     {
                         case 46584: // Raise Dead
@@ -2443,7 +2409,7 @@ void Spell::SelectEffectTargets(uint32 i, uint32 cur)
                                 switch(result->GetTypeId())
                                 {
                                     case TYPEID_UNIT:
-                                    m_targets.setDst(result);
+                                        m_targets.setDst(result);
                                 }
                             }
                             break;
@@ -2467,11 +2433,11 @@ void Spell::SelectEffectTargets(uint32 i, uint32 cur)
 
                                 WorldObject* result = FindCorpseUsing <Trinity::ExplodeCorpseObjectCheck> ();
 
-                               if (result)
+                                if (result)
                                 {
-                                   switch (result->GetTypeId())
+                                    switch (result->GetTypeId())
                                     {
-                                       case TYPEID_UNIT:
+                                        case TYPEID_UNIT:
                                         case TYPEID_PLAYER:
                                             m_targets.setUnitTarget((Unit*)result);
                                             break;
@@ -2484,7 +2450,7 @@ void Spell::SelectEffectTargets(uint32 i, uint32 cur)
                                     SendCastResult(SPELL_FAILED_CANT_DO_THAT_RIGHT_NOW);
                                     finish(false);
                                 }
-                           }
+                            }
                             break;
 
                         default:
@@ -2513,11 +2479,11 @@ void Spell::SelectEffectTargets(uint32 i, uint32 cur)
                             SearchGOAreaTarget(gobjectList, radius, pushType, SPELL_TARGETS_GO, (*i_spellST)->mConditionValue2);
                     }
                 }
-            else
+                else
                 {
                     if (m_spellInfo->Effect[i] == SPELL_EFFECT_ACTIVATE_OBJECT)
                         sLog.outDebug("Spell (ID: %u) (caster Entry: %u) with SPELL_EFFECT_ACTIVATE_OBJECT does not have type CONDITION_SOURCE_TYPE_SPELL_SCRIPT_TARGET record in `conditions` table.", m_spellInfo->Id, m_caster->GetEntry());
-                  SearchGOAreaTarget(gobjectList, radius, pushType, SPELL_TARGETS_GO);
+                    SearchGOAreaTarget(gobjectList, radius, pushType, SPELL_TARGETS_GO);
                 }
                 break;
             }
@@ -2552,8 +2518,8 @@ void Spell::SelectEffectTargets(uint32 i, uint32 cur)
                         if (pGroup)
                         {
                             for (GroupReference *itr = pGroup->GetFirstMember(); itr != NULL; itr = itr->next())
-                          {
-                               Player* Target = itr->getSource();
+                            {
+                                Player* Target = itr->getSource();
 
                                 // IsHostileTo check duel and controlled by enemy
                                 if (Target && targetPlayer->IsWithinDistInMap(Target, radius) &&
@@ -2564,13 +2530,14 @@ void Spell::SelectEffectTargets(uint32 i, uint32 cur)
                                 }
                             }
                         }
-                    else if (m_targets.getUnitTarget())
+                        else if (m_targets.getUnitTarget())
                             AddUnitTarget(m_targets.getUnitTarget(), i);
                         break;
                     }
                 }
                 break;
             }
+
         if (!unitList.empty())
         {
             // Special target selection for smart heals and energizes
@@ -2740,7 +2707,7 @@ void Spell::SelectEffectTargets(uint32 i, uint32 cur)
                 AddUnitTarget(*itr, i);
         }
 
-	        if (!gobjectList.empty())
+        if (!gobjectList.empty())
         {
             if (uint32 maxTargets = m_spellValue->MaxAffectedTargets)
             {
@@ -4642,7 +4609,6 @@ void Spell::TriggerSpell()
 
 SpellCastResult Spell::CheckCast(bool strict)
 {
-	OutdoorPvPWG *pvpWG = (OutdoorPvPWG*)sOutdoorPvPMgr.GetOutdoorPvPToZoneId(4197);
     // check cooldowns to prevent cheating
     if (m_caster->GetTypeId() == TYPEID_PLAYER && !(m_spellInfo->Attributes & SPELL_ATTR_PASSIVE))
     {
@@ -5617,7 +5583,7 @@ SpellCastResult Spell::CheckCast(bool strict)
                 if (m_originalCaster && m_originalCaster->GetTypeId() == TYPEID_PLAYER && m_originalCaster->isAlive())
                 {
                     if (AreaTableEntry const* pArea = GetAreaEntryByAreaID(m_originalCaster->GetAreaId()))
-                        if ((pArea->flags & AREA_FLAG_NO_FLY_ZONE) || (m_originalCaster->GetZoneId() == 4197 && pvpWG->isWarTime()))
+                        if (pArea->flags & AREA_FLAG_NO_FLY_ZONE)
                             return m_IsTriggeredSpell ? SPELL_FAILED_DONT_REPORT : SPELL_FAILED_NOT_HERE;
                 }
                 break;

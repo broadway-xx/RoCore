@@ -1031,16 +1031,6 @@ void Aura::HandleAuraSpecificMods(AuraApplication const * aurApp, Unit * caster,
                     }
                 }
                 break;
-            case SPELLFAMILY_SHAMAN:
-                if (!caster)
-                    break;
-                //Glyph of Totem of Wrath
-                if (GetSpellProto()->SpellFamilyFlags[0] & 0x4000000 && GetSpellProto()->Attributes & 0x00000140)
-                {
-                    if (target->HasAura(63280))
-                        target->CastSpell(target,63283,true);
-                }
-                break;
         }
     }
     // mods at aura remove
@@ -1085,9 +1075,6 @@ void Aura::HandleAuraSpecificMods(AuraApplication const * aurApp, Unit * caster,
                         if (target->HasAura(61988) && !target->HasAura(25771))
                             target->RemoveAura(61988);
                         break;
-                    case 61990: // Hodir Flash Freeze immunity remove
-                        if (target->HasAura(61990) && removeMode == AURA_REMOVE_BY_DEATH)
-                            target->RemoveAura(7940);
                     case 72368: // Shared Suffering
                     case 72369:
                         if (caster)
@@ -1310,40 +1297,6 @@ void Aura::HandleAuraSpecificMods(AuraApplication const * aurApp, Unit * caster,
     }
 
     // mods at aura apply or remove
-
-switch(GetId())
-    {
-    case 71903:
-            if(caster->GetTypeId() == TYPEID_PLAYER && urand(1,5)== 1) //this is needed because I set the weapon in the db to cast this spell on every hit
-            caster->CastSpell(caster, 71905, true); //replace the spell
-            break;
-    case 71905:
-            if (apply)
-            {
-                if(GetStackAmount()== 1)
-                    caster->AddAura(72521, caster); //add aura 1
-                if(GetStackAmount() == 6)
-                {
-                    caster->RemoveAura(72521); //remove aura 1
-                    caster->CastSpell(caster, 72523, false); //add aura 2
-                }
-                if(GetStackAmount() == 10) //final BOOM(Chaosbann)
-                {
-                    caster->RemoveAura(72523); //remove aura 2
-                    caster->RemoveAura(71905); //remove shards
-                    caster->CastSpell(caster, 71904, false); //Chaosban-aoe
-                    caster->CastSpell(caster, 73422, false); //Chaosban-buff
-                }
-                break;
-            }
-            if (!apply && aurApp->GetRemoveMode()!= AURA_REMOVE_BY_STACK)
-            {
-                caster->RemoveAura(72521); //remove aura 1
-                caster->RemoveAura(72523); //remove aura 2
-            }
-    break;
-    }
-
     switch (GetSpellProto()->SpellFamilyName)
     {
         case SPELLFAMILY_GENERIC:
@@ -1384,20 +1337,6 @@ switch(GetId())
             }
             break;
         case SPELLFAMILY_HUNTER:
-			// Freezing Trap Effect
-			if (m_spellProto->SpellFamilyFlags[0] & 0x8)
-			{
-				if(!apply)
-				{
-					Unit *caster = GetCaster();
-					// Glyph of Freezing Trap
-					if (caster && caster->HasAura(56845))
-						target->CastSpell(target,61394,true);
-					else
-						return;
-				}
-				else return;
-			}
             switch(GetId())
             {
                 case 19574: // Bestial Wrath
