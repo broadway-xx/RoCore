@@ -29,6 +29,9 @@ enum Yells
     SAY_END                       = -1666070,
     SAY_BERSERK                   = -1666069,
     SAY_OPEN_PORTAL               = -1666064,
+	SVALNA_AGGRO 				  = -2500014,
+	SVALNA_SLAY 				  = -2500015,
+	SVALNA_DEATH 				  = -2500017,
 };
 
 enum Spells
@@ -53,6 +56,18 @@ enum Spells
     SPELL_CLOUD_VISUAL               = 70876,
 };
 
+enum SvalnaSpells
+{
+	SPELL_AETHER_BURST_10            = 71468,
+	SPELL_AETHER_BURST_25            = 71469,
+	SPELL_AETHER_SHIELD				 = 71463,
+	SPELL_CARESS_OF_DEATH			 = 70078,
+	SPELL_DIVINE_SURGE 				 = 71465,
+	SPELL_IMPALING_SPEAR_KILL		 = 70196,
+	SPELL_IMPALING_SPEAR			 = 71443,
+	SPELL_REVIVE_CHAMPION			 = 70053,	
+};
+
 enum Creatures
 {
     CREATURE_WORM                       = 37907,
@@ -65,6 +80,8 @@ enum Creatures
     CREATURE_SUPPRESSER                 = 37863,
     CREATURE_ZOMBIE                     = 37934,
     CREATURE_COMBAT_TRIGGER             = 38752,
+	CREATURE_IMPALING_SPEAR 			= 38248,
+	CREATURE_SVALNA 					= 37126,
 };
 
 const Position Pos[4] =
@@ -79,6 +96,7 @@ const Position Pos[4] =
 Unit* pValithria;
 Unit* pPlayer;
 Unit* pBuff;
+Creature* pSvalna;
 
 Creature* combat_trigger= NULL;
 
@@ -568,54 +586,121 @@ struct npc_blistzombie_iccAI : public ScriptedAI
         DoScriptText(SAY_PDEATH, pValithria);
     }
 };
-struct npc_dreamcloud_iccAI : public ScriptedAI
+
+struct npc_impaling_spearAI : public Scripted_NoMovementAI
 {
-    npc_dreamcloud_iccAI(Creature* pCreature) : ScriptedAI(pCreature)
+    npc_impaling_spearAI(Creature* pCreature) : Scripted_NoMovementAI(pCreature)
+    {
+        ImpalingSpearGUID = 0;
+		me->SetReactState(REACT_PASSIVE);
+    }
+
+    uint64 IceTombGUID;
+
+    void SetPrisoner(Unit* uPrisoner)
+    {
+        ImpalingSpearGUID = uPrisoner->GetGUID();
+    }
+
+    void Reset()
+    {
+        ImpalingSpearGUID = 0;
+    }
+
+    void JustDied(Unit *killer)
+    {
+        if (killer->GetGUID() != me->GetGUID())
+
+            if (SpearGUID)
+            {
+                Unit* Spear = Unit::GetUnit((*me), ImpalingSpearGUID);
+                if (Spear)
+                    {
+                        Spear->RemoveAurasDueToSpell(SPELL_IMPALING_SPEAR);
+						pSvalna->RemoveAura(SPELL_AETHER_SHIELD);
+						pSvalna->RemoveAura(SPELL_DIVINE_SURGE);
+						pSvalna->CastSpell(me, RAID_MODE(SPELL_AETHER_BURST_10,SPELL_AETHER_BURST_25,SPELL_AETHER_BURST_10,SPELL_AETHER_BURST_25), true);
+                    }
+            }
+    }
+};
+
+struct npc_sister_svalnaAI : public ScriptedAI
+{
+    npc_sister_svalnaAI(Creature* pCreature) : ScriptedAI(pCreature)
     {
         m_pInstance = pCreature->GetInstanceData();
+		me->AddUnitMovementFlag(MOVEMENTFLAG_LEVITATING);
+		pSvalna = me;
     }
 
     ScriptedInstance* m_pInstance;
+	
+	uint32 ShieldTimer;
+	uint32 CaressTimer;
+	uint32 ImpaleTimer;
 
-    uint32 m_uiSpawnTimer;
-    uint32 m_uiDelayTimer;
-
-    void InitializeAI()
+	void Reset()
+	{
+		ImpaleTimer = 30000;
+		
+	}
+	
+	void EnterCombat(Unit *who)
     {
-        DoCast(SPELL_CLOUD_VISUAL);
-        me->AddUnitMovementFlag(MOVEMENTFLAG_FLY_MODE);
-        me->SendMovementFlagUpdate();
-        me->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_DISABLE_MOVE);
-        me->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
-    }
-
-    void JustRespawned()
-    {
-        DoCast(SPELL_CLOUD_VISUAL);
-        me->AddUnitMovementFlag(MOVEMENTFLAG_FLY_MODE);
-        me->SendMovementFlagUpdate();
-        me->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_DISABLE_MOVE);
-    }
-    void MoveInLineOfSight(Unit *who)
-    {
-        if (me->IsWithinDistInMap(who, 5.0f))
-        {
-            DoCast(SPELL_VIGOR);
-            m_uiDelayTimer = 100;
-        }
-    }
-
+		DoScriptText(SVALNA_AGGRO, me);
+	}
+	
+	void JustDied(Unit* who)
+	{
+		DoScriptText(SVALNA_DEATH, me);
+	}
+	
+	void KilledUnit(Unit *victim)
+	{
+		DoScriptText(SVALNA_SLAY, me);
+	}
+	
     void UpdateAI(const uint32 diff)
     {
         if (!UpdateVictim())
             return;
 
-        if (m_uiDelayTimer <= diff)
-        {
-            me->ForcedDespawn();
-        } else m_uiDelayTimer -= diff;
+        if (ImpaleTimer <= diff)
+		{
+			Unit* pTarget = SelectUnit(SELECT_TARGET_RANDOM,0);
+			if (!pTarget) pTarget = me->getVictim();
+			if (pTarget && pTarget->isAlive())
+				{
+					DoCast(pTarget, SPELL_IMPALING_SPEAR, true);
+                    Creature* Spear = me->SummonCreature(CREATURE_IMPALING_SPEAR, pTarget->GetPositionX(), pTarget->GetPositionY(), pTarget->GetPositionZ(), 0, TEMPSUMMON_CORPSE_TIMED_DESPAWN, 300000);
+				}
+			ImpaleTimer = 50000;
+			ShieldTimer = 30000;
+		} else ImpaleTimer -= diff;
+		
+		if (ShieldTimer <= diff)
+		{
+			DoCast(me, SPELL_AETHER_SHIELD);
+			ShieldTimer = 9999999;
+		} else ShieldTime -= diff;
+		
+		if (me->HasAura(SPELL_AETHER_SHIELD) && !me->HasAura(SPELL_DIVINE_SURGE))
+		{
+			DoCast(me, SPELL_DIVINE_SURGE);
+			CaressTimer = 60000;
+		}
+		
+		if (CaressTimer <= diff)
+		{
+			Unit* pTarget = SelectUnit(SELECT_TARGET_RANDOM,0);
+			if (!pTarget) pTarget = me->getVictim();
+			DoCast(pTarget, SPELL_CARESS_OF_DEATH);
+			CaressTimer = 9999999;
+		} CaressTimer -= diff;
+		
+		DoMeleeAttackIfReady();
     }
-
 };
 
 CreatureAI* GetAI_boss_valithria(Creature* pCreature)
@@ -663,6 +748,15 @@ CreatureAI* GetAI_npc_blistzombie_icc(Creature* pCreature)
     return new npc_blistzombie_iccAI (pCreature);
 }
 
+CreatureAI* GetAI_npc_sister_svalna(Creature* pCreature)
+{
+    return new npc_sister_svalnaAI (pCreature);
+}
+
+CreatureAI* GetAI_npc_impaling_spear(Creature* pCreature)
+{
+    return new npc_impaling_spearAI (pCreature);
+}
 void AddSC_boss_valithria()
 {
     Script *newscript;
@@ -709,5 +803,15 @@ void AddSC_boss_valithria()
     newscript = new Script;
     newscript->Name="npc_dreamcloud_icc";
     newscript->GetAI = &GetAI_npc_dreamcloud_icc;
+    newscript->RegisterSelf();
+	
+	newscript = new Script;
+    newscript->Name="npc_sister_svalna";
+    newscript->GetAI = &GetAI_npc_sister_svalna;
+    newscript->RegisterSelf();
+	
+	newscript = new Script;
+    newscript->Name="npc_impaling_spear";
+    newscript->GetAI = &GetAI_npc_impaling_spear;
     newscript->RegisterSelf();
 }
