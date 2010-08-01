@@ -183,7 +183,7 @@ struct boss_festergutAI : public ScriptedAI
 			if (pTarget->GetAura(SPELL_GASTRIC_BLOAT, 0)->GetStackAmount() >= 10)
 			{
 				DoCast(pTarget, SPELL_GASTRIC_EXPLOSION);
-				m_uiGastricBoom -= diff;
+				m_uiGastricBoom = 5000;
 			} else m_uiGastricBoom -= uiDiff;
 	}
 
