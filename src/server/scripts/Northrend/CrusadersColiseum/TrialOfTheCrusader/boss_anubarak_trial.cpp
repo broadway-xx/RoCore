@@ -276,11 +276,11 @@ struct Boss_Raid_AnubarakAI : public ScriptedAI
                         m_uiScarabSummonTimer = 20000;
                     } else m_uiScarabSummonTimer -= uiDiff;
 
-                    if (MarkTimer <= uiDiff || !pImpale->isAlive())
+                    /*if (MarkTimer <= uiDiff || !pImpale->isAlive())
                     {
                         MarkPlayer();
                         MarkTimer = 9999999;
-                    } else MarkTimer -= uiDiff;
+                    } else MarkTimer -= uiDiff;*/
 
                 }
 
