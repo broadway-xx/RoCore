@@ -108,7 +108,7 @@ bool ChatHandler::HandleMuteCommand(const char* args)
     announce += nameStr;
     announce += "' has been muted for ";
     announce += delayStr;
-    announce += " minutes '";
+    announce += " minutes by '";
     announce += m_session->GetPlayerName();
     announce += "'. Reason: ";
     announce += mutereason;
