@@ -99,6 +99,8 @@ const Position ImpalePosition = { 734.404, 139.937, 142.227, 3.155010 };
 Creature* pAnubarak;
 Creature* pImpale;
 
+uint32 MarkTimer;
+
 struct Boss_Raid_AnubarakAI : public ScriptedAI
 {
     Boss_Raid_AnubarakAI(Creature *pCreature) : ScriptedAI(pCreature)
@@ -217,7 +219,6 @@ struct Boss_Raid_AnubarakAI : public ScriptedAI
 
         void UpdateAI(const uint32 uiDiff)
         {
-                uint32 MarkTimer;
 
                 MarkTimer = 9999999;
 
@@ -276,11 +277,11 @@ struct Boss_Raid_AnubarakAI : public ScriptedAI
                         m_uiScarabSummonTimer = 20000;
                     } else m_uiScarabSummonTimer -= uiDiff;
 
-                    /*if (MarkTimer <= uiDiff || !pImpale->isAlive())
+                    if (MarkTimer <= uiDiff || !pImpale->isAlive())
                     {
                         MarkPlayer();
                         MarkTimer = 9999999;
-                    } else MarkTimer -= uiDiff;*/
+                    } else MarkTimer -= uiDiff;
 
                 }
 
@@ -530,6 +531,7 @@ struct creature_impaleAI : public ScriptedAI
 
     void JustDied(Unit* killer)
     {
+        MarkTimer = 5000;        
         me->RemoveAura(SPELL_IMPALE_TRIGGER);
     }
 
