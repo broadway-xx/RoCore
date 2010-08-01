@@ -136,8 +136,8 @@ struct boss_tyrannusAI : public ScriptedAI
         if (pInstance)
         {
             pInstance->SetData(DATA_TYRANNUS_EVENT, DONE);
-            //if (Creature* pRimefang = GetRimefang())
-             //   pRimefang->ForcedDespawn();
+            if (Creature* pRimefang = GetRimefang())
+                pRimefang->ForcedDespawn();
         }
     }
 
@@ -190,7 +190,7 @@ struct boss_rimefangAI : public ScriptedAI
 
     void Reset()
     {
-        //me->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE|UNIT_FLAG_NOT_SELECTABLE);
+        me->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE|UNIT_FLAG_NOT_SELECTABLE);
         me->InterruptSpell(CURRENT_GENERIC_SPELL);
         me->HandleEmoteCommand(EMOTE_ONESHOT_LIFTOFF);
         me->AddUnitMovementFlag(MOVEMENTFLAG_LEVITATING);
