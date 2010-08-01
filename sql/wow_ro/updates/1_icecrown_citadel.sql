@@ -354,18 +354,6 @@ INSERT INTO script_texts (entry,content_default,content_loc1,content_loc2,conten
 (-1810031, 'You gnats actually hurt me! Perhaps I''ve toyed with you long enough, now taste the vengeance of the grave!',null,null,null,null,null,null,null,null,17359,1,0,0,'');
 
 INSERT INTO `script_texts`(`npc_entry`,`entry`,`content_default`,`content_loc1`,`content_loc2`,`content_loc3`,`content_loc4`,`content_loc5`,`content_loc6`,`content_loc7`,`content_loc8`,`sound`,`type`,`language`,`emote`,`comment`) VALUES
-(-2500001, 'Insects! You''re too late. The Ruby Sanctum is lost.',null,null,null,null,null,null,null,null,17499,1,0,0,'');
-(-2500002, 'Your world teeters on the brink of annihilation. You will ALL bear witness to the coming of a new age of DESTRUCTION!',null,null,null,null,null,null,null,null,17500,1,0,0,'');
-(-2500003, 'Another hero falls.',null,null,null,null,null,null,null,null,17501,1,0,0,'');
-(-2500004, 'Hahahahaha.',null,null,null,null,null,null,null,null,17502,1,0,0,'');
-(-2500005, 'Relish this victory, mortals, for it will be your last! This world will burn with the master''s return!',null,null,null,null,null,null,null,null,17503,1,0,0,'');
-(-2500006, 'Not good enough.',null,null,null,null,null,null,null,null,17504,1,0,0,'');
-(-2500007, 'The heavens burn!',null,null,null,null,null,null,null,null,17505,1,0,0,'');
-(-2500008, 'Beware the shadow!',null,null,null,null,null,null,null,null,17506,1,0,0,'');
-(-2500009, 'You will find only suffering within the realm of twilight! Enter if you dare!',null,null,null,null,null,null,null,null,17507,1,0,0,'');
-(-2500010, 'I am the light and the darkness! Cower, mortals, before the herald of Deathwing!',null,null,null,null,null,null,null,null,17508,1,0,0,'');
-
-INSERT INTO `script_texts`(`npc_entry`,`entry`,`content_default`,`content_loc1`,`content_loc2`,`content_loc3`,`content_loc4`,`content_loc5`,`content_loc6`,`content_loc7`,`content_loc8`,`sound`,`type`,`language`,`emote`,`comment`) VALUES
 (-2500011, 'You may have once fought beside me, Crok, but now you are nothing more than a traitor. Come, your second death approaches!',null,null,null,null,null,null,null,null,17017,1,0,0,'');
 (-2500012, 'Miserable creatures, Die!',null,null,null,null,null,null,null,null,17018,1,0,0,'');
 (-2500013, 'Foolish Crok, you brought my reinforcements with you! Arise Argent Champions and serve the Lich King in death!',null,null,null,null,null,null,null,null,17019,1,0,0,'');
