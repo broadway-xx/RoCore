@@ -28,7 +28,7 @@ enum Yells
     SAY_AGGRO = -1666071,
     SAY_UNCHAINED_MAGIC = -1666072,
     SAY_BLISTERING_COLD = -1666073,
-    SAY_BREATH = -1666074,
+//    SAY_BREATH = -1666074,
     SAY_AIR_PHASE = -1666075,
     SAY_PHASE_3 = -1666076,
     SAY_KILL_1 = -1666077,
@@ -187,7 +187,7 @@ struct boss_sindragosaAI : public ScriptedAI
         m_uiBreathTimer = 15000;
         m_uiCleaveTimer = 10000;
         m_uiTailSmashTimer = 10000;
-        m_uiBlisteringColdTimer = 30000;
+        m_uiBlisteringColdTimer = 35000;
         //m_uiMarkTimer = 20000;
         m_uiPhaseTimer = 60000;
         m_uiBerserkTimer = 600000;
@@ -202,6 +202,8 @@ struct boss_sindragosaAI : public ScriptedAI
 
         me->SetFlying(false);
         me->SetReactState(REACT_AGGRESSIVE);
+
+        me->ApplySpellImmune(0, IMMUNITY_ID, SPELL_MYSTIC_BUFFET, true);
 
         if (m_pInstance)
             m_pInstance->SetData(DATA_SINDRAGOSA_EVENT, NOT_STARTED);
@@ -313,6 +315,7 @@ struct boss_sindragosaAI : public ScriptedAI
             if (Player* i_pl = i->getSource())
                 if (i_pl->isAlive())
                     i_pl->TeleportTo(me->GetMapId(), me->GetPositionX(),me->GetPositionY(),me->GetPositionZ(), 0, TELE_TO_NOT_LEAVE_COMBAT);
+        me->InterruptSpell(CURRENT_GENERIC_SPELL);
         DoScriptText(SAY_BLISTERING_COLD, me);
         DoCast(me, SPELL_ICY_GRIP_TRIGGER);
         DoCast(me, RAID_MODE(SPELL_BLISTERING_COLD_10_NORMAL,SPELL_BLISTERING_COLD_25_NORMAL));
@@ -358,7 +361,7 @@ struct boss_sindragosaAI : public ScriptedAI
     {
         me->InterruptSpell(CURRENT_GENERIC_SPELL);
         me->HandleEmoteCommand(EMOTE_ONESHOT_LIFTOFF);
-        me->GetMotionMaster()->MovePoint(1, FlyPosition);
+        me->GetMotionMaster()->MovePoint(1, 4474.239746, 2484.243896, 231.0);
         me->SetReactState(REACT_PASSIVE);
         me->AttackStop();
         me->SetFlying(true);
@@ -369,11 +372,12 @@ struct boss_sindragosaAI : public ScriptedAI
 
     void LandDown()
     {
-        me->GetMotionMaster()->MovePoint(1, SpawnPosition);
+        //me->GetMotionMaster()->MovePoint(1, SpawnPosition);
+        me->GetMotionMaster()->MoveTargetedHome();
         me->SetFlying(false);
         me->SetReactState(REACT_AGGRESSIVE);
         me->RemoveAllAuras();
-        me->GetMotionMaster()->MoveChase(me->getVictim());
+        //me->GetMotionMaster()->MoveChase(me->getVictim());
 
         m_uiPhaseTimer = 60000;
     }
@@ -394,7 +398,7 @@ struct boss_sindragosaAI : public ScriptedAI
         {
             if (m_uiBreathTimer <= uiDiff)
             {
-                DoScriptText(SAY_BREATH, me);
+                //DoScriptText(SAY_BREATH, me);
                 DoCast(me, RAID_MODE(SPELL_FROST_BREATH_10_NORMAL,SPELL_FROST_BREATH_25_NORMAL));
                 m_uiBreathTimer = 15000;
             } else m_uiBreathTimer -= uiDiff;
@@ -414,7 +418,7 @@ struct boss_sindragosaAI : public ScriptedAI
             if (m_uiBlisteringColdTimer <= uiDiff)
             {
                 BlisteringCold();
-                m_uiBlisteringColdTimer = 30000;
+                m_uiBlisteringColdTimer = 35000;
             } else m_uiBlisteringColdTimer -= uiDiff;
 
             if (m_uiUnchainedMagicTimer <= uiDiff)
