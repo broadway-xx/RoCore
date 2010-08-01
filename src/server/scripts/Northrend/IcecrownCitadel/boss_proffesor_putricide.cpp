@@ -82,6 +82,7 @@ enum ProfessorSpells
 //
     SPELL_SLIME_PUDDLE            = 70343,
     SPELL_SLIME_PUDDLE_AURA       = 70346,
+	SPELL_GROW                    = 70347,
 
     SPELL_BERSERK                 = 47008,
 //
@@ -288,8 +289,7 @@ struct boss_professor_putricideAI : public ScriptedAI
             if (m_uiPuddleTimer < uiDiff)
             {
                 Unit* pTarget = SelectUnit(SELECT_TARGET_RANDOM, 0);
-                DoCast(pTarget, SPELL_SLIME_PUDDLE);
-                me->SummonCreature(SUMMON_OOZE_PUDDLE, me->GetPositionX(), me->GetPositionY(), me->GetPositionZ(), 0, TEMPSUMMON_TIMED_OR_CORPSE_DESPAWN, 120000);
+                me->SummonCreature(SUMMON_OOZE_PUDDLE, me->GetPositionX(), me->GetPositionY(), me->GetPositionZ(), 0, TEMPSUMMON_TIMED_OR_CORPSE_DESPAWN, 1200000);
                 m_uiPuddleTimer = 4000;
             } else m_uiPuddleTimer -= uiDiff;
 
@@ -495,21 +495,33 @@ struct npc_puddle_oozeAI : public ScriptedAI
     }
     ScriptedInstance* m_pInstance;
     uint32 m_uiPuddleOozeTimer;
+	uint32 GrowStack;
+
     void Reset()
     {
+		GrowStack = 3;
+		CheckStack = 2;
         me->SetReactState(REACT_PASSIVE);
         me->SetSpeed(MOVE_WALK, 0.1f, true);
-        DoCast(SPELL_SLIME_PUDDLE);
-        m_uiPuddleOozeTimer = 8000;
+		me->GetAura(SPELL_GROW, 0)->GetStackAmount() == GrowStack;
+		me->CastCustomSpell(SPELL_SLIME_PUDDLE , SPELLVALUE_RADIUS_MOD, GrowStack*4);
+        m_uiPuddleOozeTimer = 5000;
         if (!me->HasAura(SPELL_ROOT))
-        DoCast(me, SPELL_ROOT); 
+        DoCast(me, SPELL_ROOT);
+        for (uint32 i = 0; i < 3; ++i)
+			DoCast(me, SPELL_GROW);
     }
     void UpdateAI(const uint32 uiDiff)
     {
         if(m_uiPuddleOozeTimer <= uiDiff)
         {
-             me->ForcedDespawn();
+			DoCast(SPELL_GROW);
+			GrowStack++;
+			m_uiPuddleOozeTimer = 2000;
         } else m_uiPuddleOozeTimer -= uiDiff;
+
+		if (me->GetAura(SPELL_GROW, 0)->GetStackAmount() == 1)
+			me->ForcedDespawn();
 
     }
 };
@@ -520,8 +532,8 @@ struct npc_abominationAI : public ScriptedAI
         m_pInstance = pCreature->GetInstanceData();
         pAbomination = me;
         assert(vehicle);
-//        me->SetPower(POWER_OOZE, 0);
-//        me->SetPower(me->getPowerType(POWER_OOZE), 0);
+        SetPower(POWER_OOZE, 0);
+        me->SetPower(me->getPowerType(POWER_OOZE), 0);
     }
     ScriptedInstance* m_pInstance;
 
@@ -531,6 +543,7 @@ struct npc_abominationAI : public ScriptedAI
 
     void Reset()
     {
+		DoCast(SPELL_MUTATED_AURA);
         m_uiGrabTimer = 2000;
         InVehicle = false;
     }
@@ -549,6 +562,17 @@ struct npc_abominationAI : public ScriptedAI
                 InVehicle = true;
             }
         } else m_uiGrabTimer -= uiDiff;
+
+		if (!me->HasAura(SPELL_MUTATED_AURA))
+			me->ForcedDespawn();
+
+		if (me->IsWithinDistInMap(pPuddle, 3.00f))
+		{
+			Creature *pTarget = Unit::GetCreature(pPuddle, GUID);
+			DoCast(pTarget, SPELL_EAT_OOZE);
+			for (uint32 i = 0; i < 1; ++i)
+				pPuddle->RemoveAuraFromStack(SPELL_GROW, 0, AURA_REMOVE_BY_DEFAULT);
+		}
     }
 
 };
@@ -570,7 +594,7 @@ struct npc_malleable_gooAI : public ScriptedAI
         me->SetReactState(REACT_PASSIVE);
         me->SetSpeed(MOVE_WALK, 0.3f, true);
         me->SetSpeed(MOVE_RUN, 0.3f, true);
-        m_uiDespawnTimer = 19000;
+        m_uiDespawnTimer = 21000;
         m_uiMalleableTimer = 2000;
     }
     void UpdateAI(const uint32 uiDiff)
