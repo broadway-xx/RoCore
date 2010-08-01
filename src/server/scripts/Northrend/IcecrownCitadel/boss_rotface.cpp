@@ -223,7 +223,7 @@ struct boss_rotfaceAI : public ScriptedAI
             Unit* pTarget = SelectUnit(SELECT_TARGET_RANDOM, 1);
             if(pTarget && !pTarget->HasAura(SPELL_MUTATED_INFECTION))
             {
-                DoCast(pTarget, SPELL_MUTATED_INFECTION);
+                me->CastCustomSpell(SPELL_MUTATED_INFECTION, SPELLVALUE_MAX_TARGETS, 1);
             }
             m_uiMutatedInfectionTimer = 30000;
         } else m_uiMutatedInfectionTimer -= diff;
@@ -292,7 +292,6 @@ struct boss_rotfaceAI : public ScriptedAI
 
                         if (stack1 < stack2)
                         {
-                            ooze->ForcedDespawn();
                             ooze2->CastSpell(ooze, SPELL_UNSTABLE_OOZE, false);
 
                             if (ooze2->GetAura(SPELL_UNSTABLE_OOZE) && ooze2->GetAura(SPELL_UNSTABLE_OOZE)->GetStackAmount() >= 5)
@@ -306,7 +305,6 @@ struct boss_rotfaceAI : public ScriptedAI
 
                             if (ooze->GetAura(SPELL_UNSTABLE_OOZE) && ooze->GetAura(SPELL_UNSTABLE_OOZE)->GetStackAmount() >= 5)
                                 ooze->CastSpell(ooze2->getVictim(), SPELL_UNSTABLE_EXPLOSION, true);
-
                             continue;
                         }
                     }
@@ -324,7 +322,6 @@ struct boss_rotfaceAI : public ScriptedAI
 
                         if (ooze2->GetAura(SPELL_UNSTABLE_OOZE) && ooze2->GetAura(SPELL_UNSTABLE_OOZE)->GetStackAmount() >= 5)
                             ooze2->CastSpell(ooze2->getVictim(), SPELL_UNSTABLE_EXPLOSION, true);
-
                         break;
                     }
                 }
