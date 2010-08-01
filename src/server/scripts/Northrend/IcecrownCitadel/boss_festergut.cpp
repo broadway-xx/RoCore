@@ -83,6 +83,7 @@ struct boss_festergutAI : public ScriptedAI
         m_uiGasSporesTimer = 21000;
         m_uiGastricBloatTimer = 15000;
         m_uiBerserkTimer = 300000;
+        m_uiGastricBoom = 20000;
 
         Achievements = false;
 
@@ -172,8 +173,19 @@ struct boss_festergutAI : public ScriptedAI
         {
             Unit* pTarget = SelectUnit(SELECT_TARGET_TOPAGGRO, 0);
             DoCast(pTarget, SPELL_GASTRIC_BLOAT);
-            m_uiGastricBloatTimer = 21000;
+            m_uiGastricBloatTimer = 15000;
         } else m_uiGastricBloatTimer -= uiDiff;
+
+	if (m_uiGastricBoom < uiDiff)
+	{
+		Unit* pTarget = SelectTarget(SELECT_TARGET_RANDOM, 0, 100, true);
+		if(pTarget && pTarget->HasAura(SPELL_GASTRIC_BLOAT))
+			if (pTarget->GetAura(SPELL_GASTRIC_BLOAT, 0)->GetStackAmount() >= 10)
+			{
+				DoCast(pTarget, SPELL_GASTRIC_EXPLOSION);
+				m_uiGastricBoom -= diff;
+			} else m_uiGastricBoom -= uiDiff;
+	}
 
         if(m_uiInhaleBlightTimer < uiDiff)
         {
@@ -197,7 +209,7 @@ struct boss_festergutAI : public ScriptedAI
             if (m_uiGasSporesTimer < uiDiff)
             {
                 DoScriptText(SAY_GAS_SPORES, me);
-                Unit* pTarget = SelectUnit(SELECT_TARGET_RANDOM, 1);
+                Unit* pTarget = SelectUnit(SELECT_TARGET_RANDOM, 0);
                 if (pTarget && !pTarget->HasAura(SPELL_GAS_SPORES))
                     {
                         DoCast(pTarget, SPELL_GAS_SPORES);
