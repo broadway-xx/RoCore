@@ -191,13 +191,18 @@ struct Boss_Raid_AnubarakAI : public ScriptedAI
         void SwarmTick()
         {
                 SwarmDamageTotal = 0;
-                std::list<HostileReference*>& m_threatlist = me->getThreatManager().getThreatList();
+                /*std::list<HostileReference*>& m_threatlist = me->getThreatManager().getThreatList();
                 std::list<HostileReference*>::const_iterator i = m_threatlist.begin();
                         for (i = m_threatlist.begin(); i != m_threatlist.end(); ++i)
                         {
                                 Unit* plr = Unit::GetUnit((*me), (*i)->getUnitGuid());
                                 if (plr && plr->isAlive())
-                                if(plr && plr->GetTypeId()==TYPEID_PLAYER && plr->isAlive())
+                                if(plr && plr->GetTypeId()==TYPEID_PLAYER && plr->isAlive())*/
+                Map* pMap = me->GetMap();
+		Map::PlayerList const &PlayerList = pMap->GetPlayers();
+		for (Map::PlayerList::const_iterator i = PlayerList.begin(); i != PlayerList.end(); ++i)
+			if (Player* plr = i->getSource())
+				if (plr->isAlive())
                                 {
                                         SwarmDamage = plr->GetHealth() / RAID_MODE(10,20,30,30);
                                         if(SwarmDamage < 250) SwarmDamage = 250;
