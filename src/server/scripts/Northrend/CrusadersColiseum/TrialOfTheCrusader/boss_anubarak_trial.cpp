@@ -209,7 +209,7 @@ struct Boss_Raid_AnubarakAI : public ScriptedAI
                                         SwarmDamageTotal += SwarmDamage;
                                         me->CastCustomSpell(plr, SP_LEECHING_SWARM_DMG, &SwarmDamage, NULL, NULL, true);
                                 }
-                        }
+//                        }
                 me->CastCustomSpell(me, SP_LEECHING_SWARM_HEAL, &SwarmDamageTotal, NULL, NULL, true);
         }
 
