@@ -42,6 +42,7 @@
 #define Bomb_Visual                        72054
 #define Bomb_Explosion                     72052
 #define Shrink                             35179
+#define Berserk                            47008
 
 //Invocation of Blood
 #define Invocation                         70983
@@ -64,16 +65,20 @@
 #define Keleseth_Special                   -1666038
 #define Keleseth_Slay_1                    -1666039
 #define Keleseth_Slay_2                    -1666040
-#define Keleseth_Die                       -1666041
-#define Taldaram_Invocation                -1666042
-#define Taldaram_Special                   -1666043
-#define Taldaram_Slay_1                    -1666044
-#define Taldaram_Slay_2                    -1666045
-#define Valanar_Invocation                 -1666046
-#define Valanar_Special                    -1666047
-#define Valanar_Slay_1                     -1666048
-#define Valanar_Slay_2                     -1666049
-#define Valanar_Die                        -1666050
+#define Keleseth_Berserk                   -1666041
+#define Keleseth_Die                       -1666042
+#define Taldaram_Invocation                -1666043
+#define Taldaram_Special                   -1666044
+#define Taldaram_Slay_1                    -1666045
+#define Taldaram_Slay_2                    -1666046
+#define Taldaram_Berserk                   -1666047
+#define Taldaram_Die                       -1666048
+#define Valanar_Invocation                 -1666049
+#define Valanar_Special                    -2500000
+#define Valanar_Slay_1                     -1666050
+#define Valanar_Slay_2                     -1666051
+#define Valanar_Berserk                    -1666052
+#define Valanar_Die                        -1666053
 
 
 Creature* pLanathel;
@@ -102,9 +107,12 @@ struct boss_blood_councilAI : public ScriptedAI
     uint32 EmpoweredVortexTimer;
     uint32 InvocationTimer;
     uint32 InvocationNumber;
+    uint32 BerserkTimer;
 
     void reset()
     {
+    BerserkTimer = 600000;
+
     if (pInstance)
     pInstance->SetData(DATA_BLOOD_PRINCE_COUNCIL_EVENT, NOT_STARTED);
     pLanathel = me->SummonCreature(Lanathel_Intro,4702.377930,2769.180908,364.086761,3.297119, TEMPSUMMON_CORPSE_DESPAWN);
@@ -124,6 +132,7 @@ struct boss_blood_councilAI : public ScriptedAI
        if (pInstance)
        pInstance->SetData(DATA_BLOOD_PRINCE_COUNCIL_EVENT, IN_PROGRESS);
        DoScriptText(Intro_1, pLanathel);
+       DoScriptText(Intro_2, pLanathel);
        DoStartMovement(pLanathel, 30.0f);
        PhaseIntro = 1;
       }
@@ -180,6 +189,17 @@ struct boss_blood_councilAI : public ScriptedAI
          else PhaseIntroTimer -= diff;
         }
 
+        if (BerserkTimer <= diff)
+        {
+         DoCast(me, Berserk);
+         DoScriptText(Valanar_Berserk, me);
+         DoCast(pTaldaram, Berserk);
+         DoScriptText(Taldaram_Berserk, pTaldaram);
+         DoCast(pKeleseth, Berserk);
+         DoScriptText(Keleseth_Berserk, pKeleseth);
+         BerserkTimer = 9999999;
+        } else BerserkTimer -= diff;
+
         if (VortexTimer <= diff)
         {
         if (Unit *pTarget = SelectTarget(SELECT_TARGET_RANDOM, 0, 100, true))
@@ -209,6 +229,7 @@ struct boss_blood_councilAI : public ScriptedAI
         InvocationTimer = 60000;
         if (InvocationNumber == 1) //Since only 1 of the bosses is attackable during the invocation
         {
+        DoScriptText(Valanar_Invocation, me);
         me->CastSpell(me,Invocation,true,0,0,0);
         me->CastSpell(me,Aura,true,0,0,0);
         me->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
@@ -217,6 +238,7 @@ struct boss_blood_councilAI : public ScriptedAI
         }
         else if (InvocationNumber == 2)
         {
+        DoScriptText(Keleseth_Invocation, pKeleseth);
         pKeleseth->CastSpell(pKeleseth,Invocation,true,0,0,0);
         pKeleseth->CastSpell(pKeleseth,Aura,true,0,0,0);
         pKeleseth->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
@@ -225,6 +247,7 @@ struct boss_blood_councilAI : public ScriptedAI
         }
         else if (InvocationNumber == 3)
         {
+        DoScriptText(Taldaram_Invocation, pTaldaram);
         pTaldaram->CastSpell(pTaldaram,Invocation,true,0,0,0);
         pTaldaram->CastSpell(pTaldaram,Aura,true,0,0,0);
         pTaldaram->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
