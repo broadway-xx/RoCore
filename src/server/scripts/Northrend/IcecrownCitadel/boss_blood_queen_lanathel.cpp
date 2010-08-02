@@ -191,6 +191,14 @@ struct boss_blood_queen_lanathelAI : public ScriptedAI
         if (m_uiPhase == 1)
         {
 
+            if (m_uiBloodMirror <= uiDiff)
+            {
+		pMirrorTarget = SelectTarget(SELECT_TARGET_RANDOM);
+                Unit* pTarget = SelectUnit(SELECT_TARGET_TOPAGGRO, 0);
+                pTarget->DoCast(pMirrorTarget, SPELL_BLOOD_MIRROR_1);
+                m_uiBloodMirror = 32000;
+            } else m_uiBloodMirror -= uiDiff;
+
             if (m_uiSwarmingShadowsTimer < uiDiff)
             {
                 Unit* pTarget = SelectUnit(SELECT_TARGET_RANDOM, 1);
