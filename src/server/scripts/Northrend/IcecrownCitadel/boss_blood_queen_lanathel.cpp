@@ -38,7 +38,7 @@ enum BloodQuennSpells
     SPELL_BLOOD_MIRROR_1                =    70821,
     SPELL_BLOOD_MIRROR_2                =    71510,
     SPELL_VAMPIRIC_BITE                 =    71726,
-    SPELL_PACT_OF_THE_DARKFALLEN_1      =    71340,
+    SPELL_PACT_OF_THE_DARKFALLEN        =    71340,
     SPELL_PACT_OF_THE_DARKFALLEN_2      =    71341,
     SPELL_SWARMING_SHADOWS              =    71264,
     SPELL_TWILIGHT_BLOODBOLT            =    71446,
@@ -131,6 +131,111 @@ struct boss_blood_queen_lanathelAI : public ScriptedAI
 
         if (m_pInstance)
             m_pInstance->SetData(DATA_BLOOD_QUEEN_LANATHEL_EVENT, DONE);
+    }
+
+    void doPactOfDarkfallen(bool command)
+    {
+       if (command)
+       {
+          uint8 num = urand(3,5);
+          for(uint8 i = 0; i <= num; ++i)
+              if (Unit* pTarget = doSelectRandomPlayer(SPELL_PACT_OF_DARKFALLEN, false, 60.0f))
+              {
+                  if (doCast(SPELL_PACT_OF_DARKFALLEN,pTarget) == CAST_OK)
+                  {
+                      Darkfallen[i] = pTarget;
+                      ++darkfallened;
+                  };
+              };
+       }
+       else if (darkfallened > 0)
+       {
+          for(uint8 i = 0; i < darkfallened; ++i)
+              if (Darkfallen[i])
+              {
+                 if (hasAura(SPELL_PACT_OF_DARKFALLEN,Darkfallen[i]))
+                    {
+                    for(uint8 j = 0; j < darkfallened; ++j)
+                       if (j != i && Darkfallen[j])
+                       {
+                          if(Darkfallen[j])
+                          {
+                             if (hasAura(SPELL_PACT_OF_DARKFALLEN,Darkfallen[j]))
+                                {
+                                    if (!Darkfallen[j]->IsWithinDistInMap(Darkfallen[i], 5.0f)) return;
+                                } else Darkfallen[j] = NULL;
+                          }
+                       }
+                    } else Darkfallen[i] = NULL;
+              }
+          for(uint8 i = 0; i < darkfallened; ++i)
+                 if (hasAura(SPELL_PACT_OF_DARKFALLEN,Darkfallen[i]))
+                       doRemove(SPELL_PACT_OF_DARKFALLEN, Darkfallen[i]);
+          darkfallened = 0;
+       };
+    }
+
+    void doBloodMirror(bool command)
+    {
+        if (command)
+        {
+        if (MirrorMarked)
+            if (!hasAura(SPELL_BLOOD_MIRROR_1,MirrorMarked))
+               MirrorMarked = NULL;
+
+        if (MirrorTarget)
+            if (!hasAura(SPELL_BLOOD_MIRROR_2,MirrorTarget))
+               MirrorTarget = NULL;
+
+        if (!MirrorMarked && m_creature->getVictim())
+           {
+               MirrorMarked = m_creature->getVictim();
+               if (MirrorMarked)
+                  doCast(SPELL_BLOOD_MIRROR_1, MirrorMarked);
+           }
+
+        if (!MirrorTarget)
+           {
+              MirrorTarget = doSelectRandomPlayer(SPELL_BLOOD_MIRROR_1, false, 40.0f);
+              if (MirrorTarget)
+                   doCast(SPELL_BLOOD_MIRROR_2, MirrorTarget);
+           }
+        } else
+        {
+        if (MirrorMarked)
+            if (hasAura(SPELL_BLOOD_MIRROR_1,MirrorMarked))
+            {
+               doRemove(SPELL_BLOOD_MIRROR_1, MirrorMarked);
+               MirrorMarked = NULL;
+            }
+
+        if (MirrorTarget)
+            if (hasAura(SPELL_BLOOD_MIRROR_2,MirrorTarget))
+            {
+               doRemove(SPELL_BLOOD_MIRROR_2, MirrorTarget);
+               MirrorTarget = NULL;
+            }
+        }
+
+    }
+
+    void doMirrorDamage()
+    {
+        uint32 tempdamage = MirrorDamage;
+
+        if (MirrorTarget)
+           if (MirrorTarget->isAlive())
+               m_creature->DealDamage(MirrorTarget, tempdamage, NULL, SPELL_DIRECT_DAMAGE, SPELL_SCHOOL_MASK_SHADOW, NULL, false);
+        MirrorDamage -= tempdamage;
+    }
+
+    void DamageDeal(Unit* target, uint32 &damage)
+    {
+        if (target)
+           if (MirrorMarked)
+             if (MirrorMarked->isAlive())
+                if (target == MirrorMarked)
+                   MirrorDamage += damage;
     }
 
     void UpdateAI(const uint32 uiDiff)
