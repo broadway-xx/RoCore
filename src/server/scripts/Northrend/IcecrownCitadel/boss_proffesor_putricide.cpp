@@ -566,9 +566,8 @@ struct npc_abominationAI : public ScriptedAI
 		if (!me->HasAura(SPELL_MUTATED_AURA))
 			me->ForcedDespawn();
 
-		if (me->IsWithinDistInMap(pPuddle, 3.00f))
+                if (GetClosestCreatureWithEntry(me, SUMMON_OOZE_PUDDLE, 4.0f))
 		{
-			Creature *pTarget = Unit::GetCreature(pPuddle, GUID);
 			DoCast(pTarget, SPELL_EAT_OOZE);
 			for (uint32 i = 0; i < 1; ++i)
 				pPuddle->RemoveAuraFromStack(SPELL_GROW, 0, AURA_REMOVE_BY_DEFAULT);
