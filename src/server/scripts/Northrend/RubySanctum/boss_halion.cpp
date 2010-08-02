@@ -40,14 +40,16 @@ enum eHalionSpells
 		SPELL_METEORSTRIKE = 75877,
 		SPELL_METEORSTRIKE_VISUAL = 74641,
 		SPELL_METEORSTRIKE_FLAME = 74713,
-		SPELL_FLAMEBREATH = RAID_MODE(74525,74526),
+		SPELL_FLAMEBREATH = 74525,
+                SPELL_FLAMEBREATH_H = 74526,
 		SPELL_FIERYCOMBUSTION = 74562,
 		SPELL_MARK_OF_COMBUSTION = 74567,
 		SPELL_COMBUSTION_SUMMON = 74610, //should be casted on player when FIERYCOMBUSTION is removed => spell link
 		SPELL_COMBUSTION = 74629,
 		SPELL_COMBUSTION_KNOCKBACK = 74607, //should be cast on self by player => spell link
         SPELL_BERSERK = 26662,
-		SPELL_DARKBREATH = RAID_MODE(74806,75954),
+		SPELL_DARKBREATH = 74806,
+                SPELL_DARKBREATH_H = 75954,
 		SPELL_DUSK_SHROUD = 75476,
 		SPELL_SOULCONSUMPTION = 74792,
 		SPELL_MARK_OF_CONSUMPTION = 74795,
@@ -186,7 +188,7 @@ struct boss_halionAI : public ScriptedAI
 		
 		void UpdateDps()
 		{
-			uin32 new_dps = damage_count / 5;
+			uint32 new_dps = damage_count / 5;
 			dps_last = new_dps;
 			damage_count = 0;
 		}
