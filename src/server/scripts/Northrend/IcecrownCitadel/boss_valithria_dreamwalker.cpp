@@ -611,7 +611,7 @@ struct npc_impaling_spearAI : public Scripted_NoMovementAI
     {
         if (killer->GetGUID() != me->GetGUID())
 
-            if (SpearGUID)
+            if (ImpalingSpearGUID)
             {
                 Unit* Spear = Unit::GetUnit((*me), ImpalingSpearGUID);
                 if (Spear)
@@ -683,7 +683,7 @@ struct npc_sister_svalnaAI : public ScriptedAI
 		{
 			DoCast(me, SPELL_AETHER_SHIELD);
 			ShieldTimer = 9999999;
-		} else ShieldTime -= diff;
+		} else ShieldTimer -= diff;
 		
 		if (me->HasAura(SPELL_AETHER_SHIELD) && !me->HasAura(SPELL_DIVINE_SURGE))
 		{
@@ -701,6 +701,56 @@ struct npc_sister_svalnaAI : public ScriptedAI
 		
 		DoMeleeAttackIfReady();
     }
+};
+
+struct npc_dreamcloud_iccAI : public ScriptedAI
+{
+	npc_dreamcloud_iccAI(Creature* pCreature) : ScriptedAI(pCreature)
+	{
+		m_pInstance = pCreature->GetInstanceData();
+	}
+	
+	ScriptedInstance* m_pInstance;
+	
+	uint32 m_uiSpawnTimer;
+    uint32 m_uiDelayTimer;
+	
+	void InitializeAI()
+	{
+		DoCast(SPELL_CLOUD_VISUAL);	  	
+        me->AddUnitMovementFlag(MOVEMENTFLAG_FLY_MODE);
+        me->SendMovementFlagUpdate();
+        me->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_DISABLE_MOVE);
+        me->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
+	}
+	
+	void JustRespawned()
+	{
+		DoCast(SPELL_CLOUD_VISUAL);
+        me->AddUnitMovementFlag(MOVEMENTFLAG_FLY_MODE);
+        me->SendMovementFlagUpdate();
+        me->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_DISABLE_MOVE);
+	}
+	
+	void MoveInLineOfSight(Unit *who)
+	{
+		if (me->IsWithinDistInMap(who, 5.0f))
+        {
+            DoCast(SPELL_VIGOR);
+            m_uiDelayTimer = 100;
+        }
+	}
+	
+	void UpdateAI(const uint32 diff)
+    {	
+         if (!UpdateVictim())	
+             return;
+
+        if (m_uiDelayTimer <= diff)
+        {
+            me->ForcedDespawn();
+        } else m_uiDelayTimer -= diff;
+	}
 };
 
 CreatureAI* GetAI_boss_valithria(Creature* pCreature)
