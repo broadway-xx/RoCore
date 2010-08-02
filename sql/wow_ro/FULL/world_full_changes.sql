@@ -51,7 +51,7 @@ UPDATE item_template SET maxcount = 1 WHERE entry = 45005;
 UPDATE creature_template SET  ScriptName = 'npc_argent_valiant' WHERE entry = 33448;
 
 ALTER TABLE `battleground_template`
-ADD COLUMN `honor_mod`  FLOAT NOT NULL DEFAULT 1 AFTER `HordeStartO`;
+ADD COLUMN `honor_mod`  FLOAT NOT NULL DEFAULT 1 AFTER `Weight`;
 
 
 -- script boreal tundra
