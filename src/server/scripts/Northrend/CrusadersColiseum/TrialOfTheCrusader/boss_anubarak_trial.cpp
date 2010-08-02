@@ -19,6 +19,7 @@
 
 enum Yells
 {
+        SAY_INTRO               =       -1713554,
         SAY_AGGRO               =       -1713555,
         SAY_SUBMERGE            =       -1713556,
         SAY_LEECHING_SWARM      =       -1713557,
@@ -149,6 +150,11 @@ struct Boss_Raid_AnubarakAI : public ScriptedAI
                 m_bIsTriggerSpawned = false;
 
                 SphereSummon();
+    }
+
+    void MoveInLineOfSight(Unit *who)
+    {
+                DoScriptText(SAY_INTRO, me);
     }
 
     void EnterCombat(Unit* who)
