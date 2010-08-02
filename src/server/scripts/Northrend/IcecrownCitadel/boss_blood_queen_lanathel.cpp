@@ -51,6 +51,7 @@ enum BloodQuennSpells
     SPELL_SWARMING_SHADOW_25_NORMAL     =    72635,
     SPELL_SWARMING_SHADOW_10_HEROIC     =    72636,
     SPELL_SWARMING_SHADOW_25_HEROIC     =    72637,
+    SPELL_PACT_OF_DARKFALLEN            =    71336,
 };
 
 enum Creatures
@@ -187,9 +188,9 @@ struct boss_blood_queen_lanathelAI : public ScriptedAI
             if (!hasAura(SPELL_BLOOD_MIRROR_2,MirrorTarget))
                MirrorTarget = NULL;
 
-        if (!MirrorMarked && m_creature->getVictim())
+        if (!MirrorMarked && me->getVictim())
            {
-               MirrorMarked = m_creature->getVictim();
+               MirrorMarked = me->getVictim();
                if (MirrorMarked)
                   doCast(SPELL_BLOOD_MIRROR_1, MirrorMarked);
            }
@@ -225,7 +226,7 @@ struct boss_blood_queen_lanathelAI : public ScriptedAI
 
         if (MirrorTarget)
            if (MirrorTarget->isAlive())
-               m_creature->DealDamage(MirrorTarget, tempdamage, NULL, SPELL_DIRECT_DAMAGE, SPELL_SCHOOL_MASK_SHADOW, NULL, false);
+               me->DealDamage(MirrorTarget, tempdamage, NULL, SPELL_DIRECT_DAMAGE, SPELL_SCHOOL_MASK_SHADOW, NULL, false);
         MirrorDamage -= tempdamage;
     }
 
