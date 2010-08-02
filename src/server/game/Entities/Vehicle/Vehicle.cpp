@@ -61,7 +61,7 @@ Vehicle::Vehicle(Unit *unit, VehicleEntry const *vehInfo) : me(unit), m_vehicleI
         default:
             break;
     }
-    ASSERT(!m_Seats.empty());
+//    ASSERT(!m_Seats.empty());
 }
 
 Vehicle::~Vehicle()
