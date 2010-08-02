@@ -140,9 +140,10 @@ struct boss_blood_queen_lanathelAI : public ScriptedAI
        {
           uint8 num = urand(3,5);
           for(uint8 i = 0; i <= num; ++i)
-              if (Unit* pTarget = doSelectRandomPlayer(SPELL_PACT_OF_DARKFALLEN, false, 60.0f))
+              if Unit* pTarget = SelectUnit(SELECT_TARGET_RANDOM, 1);
+                    DoCast(pTarget, SPELL_PACT_OF_DARKFALLEN);
               {
-                  if (doCast(SPELL_PACT_OF_DARKFALLEN,pTarget) == CAST_OK)
+                  if (pTarget->HasAura(SPELL_PACT_OF_DARKFALLEN))
                   {
                       Darkfallen[i] = pTarget;
                       ++darkfallened;
@@ -154,14 +155,14 @@ struct boss_blood_queen_lanathelAI : public ScriptedAI
           for(uint8 i = 0; i < darkfallened; ++i)
               if (Darkfallen[i])
               {
-                 if (hasAura(SPELL_PACT_OF_DARKFALLEN,Darkfallen[i]))
+                 if (pTarget->HasAura(SPELL_PACT_OF_DARKFALLEN,Darkfallen[i]))
                     {
                     for(uint8 j = 0; j < darkfallened; ++j)
                        if (j != i && Darkfallen[j])
                        {
                           if(Darkfallen[j])
                           {
-                             if (hasAura(SPELL_PACT_OF_DARKFALLEN,Darkfallen[j]))
+                             if (pTarget->HasAura(SPELL_PACT_OF_DARKFALLEN,Darkfallen[j]))
                                 {
                                     if (!Darkfallen[j]->IsWithinDistInMap(Darkfallen[i], 5.0f)) return;
                                 } else Darkfallen[j] = NULL;
@@ -170,8 +171,8 @@ struct boss_blood_queen_lanathelAI : public ScriptedAI
                     } else Darkfallen[i] = NULL;
               }
           for(uint8 i = 0; i < darkfallened; ++i)
-                 if (hasAura(SPELL_PACT_OF_DARKFALLEN,Darkfallen[i]))
-                       doRemove(SPELL_PACT_OF_DARKFALLEN, Darkfallen[i]);
+                 if (pTarget->HasAura(SPELL_PACT_OF_DARKFALLEN,Darkfallen[i]))
+                       pTarget->RemoveAurasDueToSpell(SPELL_PACT_OF_DARKFALLEN, Darkfallen[i]);
           darkfallened = 0;
        };
     }
