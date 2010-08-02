@@ -66,6 +66,7 @@ enum SvalnaSpells
 	SPELL_IMPALING_SPEAR_KILL		 = 70196,
 	SPELL_IMPALING_SPEAR			 = 71443,
 	SPELL_REVIVE_CHAMPION			 = 70053,	
+	SPELL_REMOVE_SPEAR				 = 71462,
 };
 
 enum Creatures
@@ -591,25 +592,26 @@ struct npc_impaling_spearAI : public Scripted_NoMovementAI
 {
     npc_impaling_spearAI(Creature* pCreature) : Scripted_NoMovementAI(pCreature)
     {
-        ImpalingSpearGUID = 0;
 		me->SetReactState(REACT_PASSIVE);
+		ImpalingSpearGUID = 0;
     }
-
-    uint64 IceTombGUID;
-
-    void SetPrisoner(Unit* uPrisoner)
+	
+	uint64 ImpalingSpearGUID;
+	
+	void SetPrisoner(Unit* uPrisoner)
     {
         ImpalingSpearGUID = uPrisoner->GetGUID();
     }
-
-    void Reset()
+	
+	void Reset()
     {
         ImpalingSpearGUID = 0;
     }
-
-    void JustDied(Unit *killer)
-    {
-        if (killer->GetGUID() != me->GetGUID())
+	
+	void DamageTaken(Unit *who, uint32 &dmg)
+	{
+		who->CastSpell(who, SPELL_REMOVE_SPEAR, true);
+		if (who->GetGUID() != me->GetGUID())
 
             if (ImpalingSpearGUID)
             {
@@ -617,12 +619,10 @@ struct npc_impaling_spearAI : public Scripted_NoMovementAI
                 if (Spear)
                     {
                         Spear->RemoveAurasDueToSpell(SPELL_IMPALING_SPEAR);
-						pSvalna->RemoveAura(SPELL_AETHER_SHIELD);
-						pSvalna->RemoveAura(SPELL_DIVINE_SURGE);
-						pSvalna->CastSpell(me, RAID_MODE(SPELL_AETHER_BURST_10,SPELL_AETHER_BURST_25,SPELL_AETHER_BURST_10,SPELL_AETHER_BURST_25), true);
                     }
             }
-    }
+            me->ForcedDespawn();
+	}
 };
 
 struct npc_sister_svalnaAI : public ScriptedAI
@@ -691,12 +691,12 @@ struct npc_sister_svalnaAI : public ScriptedAI
 			CaressTimer = 60000;
 		}
 		
-		if (CaressTimer <= diff)
+		if (CaressTimer <= diff && me->HasAura(SPELL_AETHER_SHIELD))
 		{
 			Unit* pTarget = SelectUnit(SELECT_TARGET_RANDOM,0);
 			if (!pTarget) pTarget = me->getVictim();
 			DoCast(pTarget, SPELL_CARESS_OF_DEATH);
-			CaressTimer = 9999999;
+			CaressTimer = 60000;
 		} CaressTimer -= diff;
 		
 		DoMeleeAttackIfReady();
