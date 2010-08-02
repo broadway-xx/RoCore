@@ -496,6 +496,7 @@ struct npc_puddle_oozeAI : public ScriptedAI
     ScriptedInstance* m_pInstance;
     uint32 m_uiPuddleOozeTimer;
 	uint32 GrowStack;
+	uint32 CheckStack;
 
     void Reset()
     {

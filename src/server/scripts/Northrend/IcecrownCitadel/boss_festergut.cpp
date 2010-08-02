@@ -72,6 +72,7 @@ struct boss_festergutAI : public ScriptedAI
     uint32 m_uiVileGasTimer;
     uint32 m_uiGastricBloatTimer;
     uint32 m_uiBerserkTimer;
+    uint32 m_uiGastricBoom;
 
     bool Achievements;
 
