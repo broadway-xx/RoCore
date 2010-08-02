@@ -203,49 +203,49 @@ struct boss_halionAI : public ScriptedAI
             if(!UpdateVictim())
                 return;
 
-			if (m_uiBerserkTimer <= uiDiff)
+			if (m_uiBerserkTimer <= diff)
 			{
 				DoCast(me, SPELL_BERSERK);
 				DoScriptText(SAY_BERSERK, me);
 				m_uiBerserkTimer = 9999999;
-			} else m_uiBerserkTimer -= uiDiff;
+			} else m_uiBerserkTimer -= diff;
 			
-			if (m_uiCleaveTimer <= uiDiff)
+			if (m_uiCleaveTimer <= diff)
 			{
 				DoCast(me, SPELL_CLEAVE);
 				m_uiCleaveTimer = 15000;
-			} else m_uiCleaveTimer -= uiDiff;
+			} else m_uiCleaveTimer -= diff;
 			
-			if (m_uiTailLashTimer <= uiDiff)
+			if (m_uiTailLashTimer <= diff)
 			{
 				DoCast(me, SPELL_TAILLASH);
 				m_uiTailLashTimer = 10000;
-			} else m_uiTailLashTimer -= uiDiff;
+			} else m_uiTailLashTimer -= diff;
 			
-			if (m_uiFlameBreathTimer <= uiDiff)
+			if (m_uiFlameBreathTimer <= diff)
 			{
 				DoCast(me, SPELL_FLAMEBREATH);
 				m_uiFlameBreathTimer = 20000;
-			} else m_uiFlameBreathTimer -= uiDiff;
+			} else m_uiFlameBreathTimer -= diff;
 			
-			if (m_uiFieryCombustionTimer <= uiDiff)
+			if (m_uiFieryCombustionTimer <= diff)
 			{
 				FieryCombustion();
 				m_uiFieryCombustionTimer = 15000;
 				CombustionTick = 2000;
-			} else m_uiFieryCombustionTimer -= uiDiff;
+			} else m_uiFieryCombustionTimer -= diff;
 			
-			if (CombustionTick <= uiDiff)
+			if (CombustionTick <= diff)
 			{
 				CombustionMark();
 				CombustionTick = 2000;
-			} else CombustionTick -= uiDiff;
+			} else CombustionTick -= diff;
 			
-			if (m_uiMeteorStrikeTimer <= uiDiff)
+			if (m_uiMeteorStrikeTimer <= diff)
 			{
 				MeteorStrike();
 				m_uiMeteorStrikeTimer = 30000;
-			} else m_uiMeteorStrikeTimer -= uiDiff;
+			} else m_uiMeteorStrikeTimer -= diff;
 			
 			if ((me->GetHealth()*100) / me->GetMaxHealth() <= 75)
 			{
@@ -294,9 +294,9 @@ struct boss_halionAI : public ScriptedAI
 			if(who->GetGUID() == me->GetGUID())
 				return;
 
-			damage_count += damage;	
+			damage_count += dmg;	
 				
-			if(m_pInstance)
+			if(pInstance)
 			{
 				if(pHalionTwilight->isAlive())
 					pHalionTwilight->SetHealth(pHalionTwilight->GetHealth() > dmg ? pHalionTwilight->GetHealth()-dmg : 1);
@@ -374,7 +374,7 @@ struct boss_twilight_halionAI : public ScriptedAI
 
 		 void UpdateDps()
 		{
-			uin32 new_dps = damage_count / 5;
+			uint32 new_dps = damage_count / 5;
 			dps_last = new_dps;
 			damage_count = 0;
 		}
@@ -393,43 +393,43 @@ struct boss_twilight_halionAI : public ScriptedAI
 				me->SetReactState(REACT_AGGRESSIVE);			
 			}
 			
-			if (m_uiBerserkTimer <= uiDiff)
+			if (m_uiBerserkTimer <= diff)
 			{
 				DoCast(me, SPELL_BERSERK);
 				DoScriptText(SAY_BERSERK, me);
 				m_uiBerserkTimer = 9999999;
-			} else m_uiBerserkTimer -= uiDiff;
+			} else m_uiBerserkTimer -= diff;
 			
-			if (m_uiCleaveTimer <= uiDiff)
+			if (m_uiCleaveTimer <= diff)
 			{
 				DoCast(me, SPELL_CLEAVE);
 				m_uiCleaveTimer = 15000;
-			} else m_uiCleaveTimer -= uiDiff;
+			} else m_uiCleaveTimer -= diff;
 			
-			if (m_uiTailLashTimer <= uiDiff)
+			if (m_uiTailLashTimer <= diff)
 			{
 				DoCast(me, SPELL_TAILLASH);
 				m_uiTailLashTimer = 10000;
-			} else m_uiTailLashTimer -= uiDiff;
+			} else m_uiTailLashTimer -= diff;
 			
-			if (m_uiDarkBreathTimer <= uiDiff)
+			if (m_uiDarkBreathTimer <= diff)
 			{
 				DoCast(me, SPELL_DARKBREATH);
 				m_uiDarkBreathTimer = 20000;
-			} else m_uiDarkBreathTimer -= uiDiff;
+			} else m_uiDarkBreathTimer -= diff;
 			
-			if (m_uiSoulConsumptionTimer <= uiDiff)
+			if (m_uiSoulConsumptionTimer <= diff)
 			{
 				SoulConsumption();
 				m_uiSoulConsumptionTimer = 15000;
 				ConsumptionTick = 2000;
-			} else m_uiSoulConsumptionTimer -= uiDiff;
+			} else m_uiSoulConsumptionTimer -= diff;
 			
-			if (ConsumptionTick <= uiDiff)
+			if (ConsumptionTick <= diff)
 			{
 				ConsumptionMark();
 				ConsumptionTick = 2000;
-			} else ConsumptionTick -= uiDiff;
+			} else ConsumptionTick -= diff;
 					
 			if ((me->GetHealth()*100) / me->GetMaxHealth() <= 50)
 			{
@@ -542,9 +542,9 @@ struct boss_twilight_halionAI : public ScriptedAI
 			if(who->GetGUID() == me->GetGUID())
 				return;
 
-			damage_count += damage;	
+			damage_count += dmg;	
 			
-			if(m_pInstance)
+			if(pInstance)
 			{
 				if(pHalion->isAlive())
 					pHalion->SetHealth(pHalion->GetHealth() > dmg ? pHalion->GetHealth()-dmg : 1);
@@ -587,7 +587,7 @@ struct npc_meteor_strikeAI : public ScriptedAI
             if(!UpdateVictim())
                 return;
 				
-			if (BlastTimer <= uiDiff)
+			if (BlastTimer <= diff)
 			{
 				DoCast(me, SPELL_METEORSTRIKE);
 				
@@ -597,7 +597,7 @@ struct npc_meteor_strikeAI : public ScriptedAI
                 me->SummonCreature(NPC_METEOR_FLAME, me->GetPositionX()-20, me->GetPositionY()+20, me->GetPositionZ(), 0, TEMPSUMMON_TIMED_DESPAWN, 8000);
 				
 				me->ForcedDespawn();
-			} else BlastTimer -= uiDiff;
+			} else BlastTimer -= diff;
 
             DoMeleeAttackIfReady();
         }
@@ -628,19 +628,19 @@ struct npc_meteor_flameAI : public ScriptedAI
         m_uiColdDespawn = 9000;
         m_uiColdFlameTimer = 1000;
     }
-    void UpdateAI(const uint32 uiDiff)
+    void UpdateAI(const uint32 diff)
     {
-        if(m_uiColdFlameTimer <= uiDiff)
+        if(m_uiColdFlameTimer <= diff)
         {
             DoCast(me, SPELL_METEORSTRIKE_FLAME);
             m_uiColdFlameTimer = 1000;
-        } else m_uiColdFlameTimer -= uiDiff;
+        } else m_uiColdFlameTimer -= diff;
 
-        if(m_uiColdDespawn <= uiDiff)
+        if(m_uiColdDespawn <= diff)
         {
             //DoCast(me, SPELL_COLD_DESPAWN);
             me->ForcedDespawn();
-        } m_uiColdDespawn -= uiDiff;
+        } m_uiColdDespawn -= diff;
     }
 };
 
@@ -681,10 +681,10 @@ struct npc_combustionAI : public ScriptedAI
             if(!UpdateVictim())
                 return;
 				
-			if (Duration <= uiDiff)
+			if (Duration <= diff)
 			{
 				me->ForcedDespawn();
-			} else Duration -= uiDiff;
+			} else Duration -= diff;
 
             DoMeleeAttackIfReady();
         }
@@ -727,10 +727,10 @@ struct npc_consumptionAI : public ScriptedAI
             if(!UpdateVictim())
                 return;
 				
-			if (Duration <= uiDiff)
+			if (Duration <= diff)
 			{
 				me->ForcedDespawn();
-			} else Duration -= uiDiff;
+			} else Duration -= diff;
 
             DoMeleeAttackIfReady();
         }
