@@ -533,8 +533,7 @@ struct npc_abominationAI : public ScriptedAI
         m_pInstance = pCreature->GetInstanceData();
         pAbomination = me;
         assert(vehicle);
-        SetPower(POWER_OOZE, 0);
-        me->SetPower(me->getPowerType(POWER_OOZE), 0);
+        me->SetPower(POWER_ENERGY, 10);
     }
     ScriptedInstance* m_pInstance;
 
@@ -544,7 +543,7 @@ struct npc_abominationAI : public ScriptedAI
 
     void Reset()
     {
-		DoCast(SPELL_MUTATED_AURA);
+	DoCast(SPELL_MUTATED_AURA);
         m_uiGrabTimer = 2000;
         InVehicle = false;
     }
