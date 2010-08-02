@@ -98,7 +98,8 @@ struct boss_blood_queen_lanathelAI : public ScriptedAI
         m_uiTwilightBloodboltTimer = 10000;
         m_uiVampBiteTimer  = 15000;
         m_uiSwarmingShadowsTimer = 30000;
-        m_uiPactofDarkfallenTimer  = 5000;
+        m_uiPactofDarkfallenTimer  = 15000;
+        m_uiBloodMirror = 25000;
         m_uiSetHoverTimer = 90000;
         m_uiBloodboldSplashTimer = 900000;
         m_uiLandingTimer = 900000;
@@ -139,8 +140,10 @@ struct boss_blood_queen_lanathelAI : public ScriptedAI
        if (command)
        {
           uint8 num = urand(3,5);
-          for(uint8 i = 0; i <= num; ++i)
-              if Unit* pTarget = SelectUnit(SELECT_TARGET_RANDOM, 1);
+          for(uint8 darkfallened = 0; darkfallened <= num; ++darkfallened)
+            if (m_uiPactofDarkfallenTimer <= uiDiff)
+                DoScriptText(SAY_PACT_DARKFALLEN, me);
+                if Unit* pTarget = SelectUnit(SELECT_TARGET_RANDOM, 1);
                     DoCast(pTarget, SPELL_PACT_OF_DARKFALLEN);
               {
                   if (pTarget->HasAura(SPELL_PACT_OF_DARKFALLEN))
@@ -177,69 +180,6 @@ struct boss_blood_queen_lanathelAI : public ScriptedAI
        };
     }
 
-    void doBloodMirror(bool command)
-    {
-        if (command)
-        {
-        if (MirrorMarked)
-            if (!hasAura(SPELL_BLOOD_MIRROR_1,MirrorMarked))
-               MirrorMarked = NULL;
-
-        if (MirrorTarget)
-            if (!hasAura(SPELL_BLOOD_MIRROR_2,MirrorTarget))
-               MirrorTarget = NULL;
-
-        if (!MirrorMarked && me->getVictim())
-           {
-               MirrorMarked = me->getVictim();
-               if (MirrorMarked)
-                  doCast(SPELL_BLOOD_MIRROR_1, MirrorMarked);
-           }
-
-        if (!MirrorTarget)
-           {
-              MirrorTarget = doSelectRandomPlayer(SPELL_BLOOD_MIRROR_1, false, 40.0f);
-              if (MirrorTarget)
-                   doCast(SPELL_BLOOD_MIRROR_2, MirrorTarget);
-           }
-        } else
-        {
-        if (MirrorMarked)
-            if (hasAura(SPELL_BLOOD_MIRROR_1,MirrorMarked))
-            {
-               doRemove(SPELL_BLOOD_MIRROR_1, MirrorMarked);
-               MirrorMarked = NULL;
-            }
-
-        if (MirrorTarget)
-            if (hasAura(SPELL_BLOOD_MIRROR_2,MirrorTarget))
-            {
-               doRemove(SPELL_BLOOD_MIRROR_2, MirrorTarget);
-               MirrorTarget = NULL;
-            }
-        }
-
-    }
-
-    void doMirrorDamage()
-    {
-        uint32 tempdamage = MirrorDamage;
-
-        if (MirrorTarget)
-           if (MirrorTarget->isAlive())
-               me->DealDamage(MirrorTarget, tempdamage, NULL, SPELL_DIRECT_DAMAGE, SPELL_SCHOOL_MASK_SHADOW, NULL, false);
-        MirrorDamage -= tempdamage;
-    }
-
-    void DamageDeal(Unit* target, uint32 &damage)
-    {
-        if (target)
-           if (MirrorMarked)
-             if (MirrorMarked->isAlive())
-                if (target == MirrorMarked)
-                   MirrorDamage += damage;
-    }
-
     void UpdateAI(const uint32 uiDiff)
     {
         if (!UpdateVictim())
@@ -250,14 +190,6 @@ struct boss_blood_queen_lanathelAI : public ScriptedAI
 
         if (m_uiPhase == 1)
         {
-
-            if (m_uiPactofDarkfallenTimer <= uiDiff)
-            {
-                DoScriptText(SAY_PACT_DARKFALLEN, me);
-                m_uiPactofDarkfallenExplosionCount = 0;
-                m_uiPactofDarkfallenExplodeTimer = 2000;
-                m_uiPactofDarkfallenTimer = 25000;
-            } else m_uiPactofDarkfallenTimer -= uiDiff;
 
             if (m_uiSwarmingShadowsTimer < uiDiff)
             {
@@ -276,7 +208,7 @@ struct boss_blood_queen_lanathelAI : public ScriptedAI
             if (m_uiVampBiteTimer < uiDiff)
             {
                 DoScriptText(RAND(SAY_VAMP_BITE_1, SAY_VAMP_BITE_2), me);
-                Unit* pTarget = SelectUnit(SELECT_TARGET_TOPAGGRO, 0);
+                Unit* pTarget = SelectUnit(SELECT_TARGET_RANDOM, 1);
                 DoCast(pTarget, SPELL_VAMPIRIC_BITE);
                 m_uiVampBiteTimer = 45000 + rand()%20000;
             } else m_uiVampBiteTimer -= uiDiff;
