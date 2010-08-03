@@ -67,6 +67,7 @@ enum SaurfangSpells
     SPELL_RUNE_OF_BLOOD_25_NORMAL = 72410,
     SPELL_RUNE_OF_BLOOD_10_HEROIC = 72448,
     SPELL_RUNE_OF_BLOOD_25_HEROIC = 72448,
+    SPELL_RUNE_OF_BLOOD_TRIGGER   = 72449,
     SPELL_BLOOD_LINK_BEAST        = 72176,
     SPELL_RESISTAN_SKIN           = 72723,
     SPELL_SCENT_OF_BLOOD          = 72769,
@@ -96,6 +97,7 @@ struct boss_saurfangAI : public ScriptedAI
     uint32 m_uiBoilingBloodTimer;
     uint32 m_uiBloodNovaTimer;
     uint32 m_uiRuneOfBloodTimer;
+    uint32 m_uiRuneOfBloodTimer2;
     uint32 m_uiSummonBloodBeastTimer;
     uint32 m_uiBerserkTimer;
 
@@ -114,8 +116,7 @@ struct boss_saurfangAI : public ScriptedAI
         if (m_pInstance)
             m_pInstance->SetData(DATA_SAURFANG, NOT_STARTED);
 
-/*        me->SetPower(POWER_BLOOD_POWER, 1);
-        me->SetPower(me->getPowerType(POWER_BLOOD_POWER), 0);*/
+        me->SetPower(POWER_ENERGY, 1);
         me->RemoveAllAuras();
 
         DoCast(me, SPELL_ZERO_POWER);
@@ -164,7 +165,6 @@ struct boss_saurfangAI : public ScriptedAI
             if (pVictim->HasAura(72293))
             {
                 DoCast(me, SPELL_FALLEN_CHAMPION_AURA);
-
                 if(!Achievement)
                 m_pInstance->DoCompleteAchievement(RAID_MODE(ACHIEV_MESS_10,ACHIEV_MESS_25));
                 Achievement = true;
@@ -198,10 +198,19 @@ struct boss_saurfangAI : public ScriptedAI
             }
         }
 
+        if (m_uiRuneOfBloodTimer2 < uiDiff)
+        {
+            if (Unit* pTarget = SelectUnit(SELECT_TARGET_TOPAGGRO, 0))
+                DoCast(pTarget, SPELL_RUNE_OF_BLOOD_TRIGGER);
+                me->ModifyPower(Saurfang->GetPowerType(), +1);
+            m_uiRuneOfBloodTimer2 = 60000;
+        } else m_uiRuneOfBloodTimer2 -= uiDiff;
+
         if (m_uiBoilingBloodTimer < uiDiff)
         {
-            if (Unit* pTarget = SelectUnit(SELECT_TARGET_RANDOM, 1))
+            if (Unit* pTarget = SelectUnit(SELECT_TARGET_RANDOM, 1))SPELL_RUNE_OF_BLOOD_TRIGGER
                 DoCast(pTarget, SPELL_BOILING_BLOOD_10_NORMAL);
+                me->ModifyPower(Saurfang->GetPowerType(), +1);
             m_uiBoilingBloodTimer = 20000;
         } else m_uiBoilingBloodTimer -= uiDiff;
 
@@ -213,6 +222,7 @@ struct boss_saurfangAI : public ScriptedAI
             {
                 Unit* pTarget = SelectUnit(SELECT_TARGET_RANDOM, 1);
                 DoCast(pTarget, RAID_MODE(SPELL_BLOOD_NOVA_10_NORMAL,SPELL_BLOOD_NOVA_25_NORMAL,SPELL_BLOOD_NOVA_10_HEROIC,SPELL_BLOOD_NOVA_25_HEROIC));
+                ModifyPower(Saurfang->GetPowerType(), +1);
                 m_uiBloodNovaTimer = 23000;
             }
         } else m_uiBloodNovaTimer -= uiDiff;
@@ -243,8 +253,10 @@ struct boss_saurfangAI : public ScriptedAI
         {
             Unit* pTarget = SelectUnit(SELECT_TARGET_TOPAGGRO, 0);
             DoCast(pTarget, RAID_MODE(SPELL_RUNE_OF_BLOOD_10_NORMAL,SPELL_RUNE_OF_BLOOD_25_NORMAL,SPELL_RUNE_OF_BLOOD_10_HEROIC,SPELL_RUNE_OF_BLOOD_25_HEROIC));
-           // me->ModifyHealth(me->GetMaxHealth() * 0.05);
+            me->ModifyHealth(me->GetMaxHealth() * 0.01);
+            me->ModifyPower(Saurfang->GetPowerType(), +2);
             m_uiRuneOfBloodTimer = 40000;
+            m_uiRuneOfBloodTimer2 = 5000;
         } else m_uiRuneOfBloodTimer -= uiDiff;
 
         if(me->GetHealth()*100 / me->GetMaxHealth() < 30)
@@ -278,6 +290,7 @@ struct npc_bloodbeastAI : public ScriptedAI
     bool ScentOfBlood;
 
     uint32 m_uiScentOfBloodTimer;
+    uint32 m_uiPowerAdd;
 
     void Reset()
     {
@@ -298,6 +311,7 @@ struct npc_bloodbeastAI : public ScriptedAI
         if (Creature* Saurfang = me->GetCreature(*me, m_pInstance->GetData64(DATA_SAURFANG)))
         {
             Saurfang->ModifyHealth(Saurfang->GetMaxHealth() * 0.01);
+            Saurfang->ModifyPower(Saurfang->GetPowerType(), +10);
         }
     }
 
