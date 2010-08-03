@@ -91,7 +91,9 @@ struct boss_blood_queen_lanathelAI : public ScriptedAI
     uint32 m_uiFlyingFalseTimer;
     uint32 m_uiBloodboldSplashTimer;
     uint32 m_uiBloodMirror;
-    Unit* Darkfallen[5];
+    
+	Unit* pMirrorTarget;
+	Unit* Darkfallen[5];
     uint8 darkfallened;
 
     void Reset()
@@ -138,49 +140,32 @@ struct boss_blood_queen_lanathelAI : public ScriptedAI
             m_pInstance->SetData(DATA_BLOOD_QUEEN_LANATHEL_EVENT, DONE);
     }
 
-    void doPactOfDarkfallen(bool command)
+    void doPactOfDarkfallen()
     {
-       if (command)
-       {
-          uint8 num = urand(3,5);
-          for(uint8 darkfallened = 0; darkfallened <= num; ++darkfallened)
-            if (m_uiPactofDarkfallenTimer <= uiDiff)
-                DoScriptText(SAY_PACT_DARKFALLEN, me);
+		uint8 num = RAID_MODE(3,5,3,5);
+        DoScriptText(SAY_PACT_DARKFALLEN, me);
+        for(uint8 i = 0; i <= num; ++i)
+            {   
                 Unit* pTarget = SelectUnit(SELECT_TARGET_RANDOM,0);
-                    DoCast(pTarget, SPELL_PACT_OF_DARKFALLEN);
-              {
-                  if (pTarget->HasAura(SPELL_PACT_OF_DARKFALLEN))
-                  {
-                      Darkfallen[i] = pTarget;
-                      ++darkfallened;
-                  };
-              };
-       }
-       else if (darkfallened > 0)
-       {
-          for(uint8 i = 0; i < darkfallened; ++i)
-              if (Darkfallen[i])
-              {
-                 if (pTarget->HasAura(SPELL_PACT_OF_DARKFALLEN,Darkfallen[i]))
-                    {
-                    for(uint8 j = 0; j < darkfallened; ++j)
-                       if (j != i && Darkfallen[j])
-                       {
-                          if(Darkfallen[j])
-                          {
-                             if (pTarget->HasAura(SPELL_PACT_OF_DARKFALLEN,Darkfallen[j]))
-                                {
-                                    if (!Darkfallen[j]->IsWithinDistInMap(Darkfallen[i], 5.0f)) return;
-                                } else Darkfallen[j] = NULL;
-                          }
-                       }
-                    } else Darkfallen[i] = NULL;
-              }
-          for(uint8 i = 0; i < darkfallened; ++i)
-                 if (pTarget->HasAura(SPELL_PACT_OF_DARKFALLEN,Darkfallen[i]))
-                       pTarget->RemoveAurasDueToSpell(SPELL_PACT_OF_DARKFALLEN, Darkfallen[i]);
-          darkfallened = 0;
-       };
+                DoCast(pTarget, SPELL_PACT_OF_DARKFALLEN);
+                Darkfallen[++darkfallened] = pTarget;                    
+            }
+	}
+	
+	void removePactOfDarkfallen()
+	{
+        uint8 all = 1;
+		if (Darkfallen[0])
+            for(uint8 j = 1; j < darkfallened; ++j)
+                if (Darkfallen[j] && Darkfallen[j]->IsWithinDistInMap(Darkfallen[0], 5.0f))
+					++all;
+        if (all == RAID_MODE(3,5,3,5))
+		{
+            for (uint8 i = 1; i < darkfallened; ++i)
+				Darkfallen[i]->RemoveAurasDueToSpell(SPELL_PACT_OF_DARKFALLEN);
+            darkfallened = 0;
+			Darkfallen.clear();
+        }
     }
 
     void UpdateAI(const uint32 uiDiff)
@@ -194,11 +179,21 @@ struct boss_blood_queen_lanathelAI : public ScriptedAI
         if (m_uiPhase == 1)
         {
 
+			if (darkfallened)
+				removePactOfDarkfallen();
+		
+            if (m_uiPactofDarkfallenTimer <= uiDiff)
+            {
+                doPactOfDarkfallen();
+				m_uiPactofDarkfallenTimer = 30000;
+				
+            } else m_uiPactofDarkfallenTimer -= uiDiff;
+
             if (m_uiBloodMirror <= uiDiff)
             {
-		pMirrorTarget = SelectTarget(SELECT_TARGET_RANDOM);
+				pMirrorTarget = SelectTarget(SELECT_TARGET_RANDOM);
                 Unit* pTarget = SelectUnit(SELECT_TARGET_TOPAGGRO, 0);
-                pTarget->DoCast(pMirrorTarget, SPELL_BLOOD_MIRROR_1);
+                pTarget->CastSpell(pMirrorTarget, SPELL_BLOOD_MIRROR_1, true);
                 m_uiBloodMirror = 32000;
             } else m_uiBloodMirror -= uiDiff;
 
