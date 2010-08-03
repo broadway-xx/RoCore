@@ -90,6 +90,9 @@ struct boss_blood_queen_lanathelAI : public ScriptedAI
     uint32 m_uiLandingTimer;
     uint32 m_uiFlyingFalseTimer;
     uint32 m_uiBloodboldSplashTimer;
+    uint32 m_uiBloodMirror;
+    Unit* Darkfallen[5];
+    uint8 darkfallened;
 
     void Reset()
     {
@@ -143,7 +146,7 @@ struct boss_blood_queen_lanathelAI : public ScriptedAI
           for(uint8 darkfallened = 0; darkfallened <= num; ++darkfallened)
             if (m_uiPactofDarkfallenTimer <= uiDiff)
                 DoScriptText(SAY_PACT_DARKFALLEN, me);
-                if Unit* pTarget = SelectUnit(SELECT_TARGET_RANDOM, 1);
+                Unit* pTarget = SelectUnit(SELECT_TARGET_RANDOM,0);
                     DoCast(pTarget, SPELL_PACT_OF_DARKFALLEN);
               {
                   if (pTarget->HasAura(SPELL_PACT_OF_DARKFALLEN))
